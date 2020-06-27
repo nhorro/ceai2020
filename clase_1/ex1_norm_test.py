@@ -3,7 +3,7 @@ import math
 
 import numpy as np
 
-from clase_1.norm import vector_norm_l0, vector_norm_l1, vector_norm_l2, vector_norm_inf
+from clase_1.ex1_norm import vector_norm_l0, vector_norm_l1, vector_norm_l2, vector_norm_inf
 
 
 class NormTestCase(TestCase):

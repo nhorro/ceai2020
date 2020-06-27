@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from clase1.indexer import Indexer
+from clase_1.ex3_indexer import Indexer
 
 
 class IndexerTestCase(TestCase):

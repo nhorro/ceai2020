@@ -1,6 +1,6 @@
 import numpy as np
 
-from clase_1.norm import vector_norm_l2
+from clase_1.ex1_norm import vector_norm_l2
 
 
 def sorting_vectors_by_norm_l2(matrix):

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from clase_1.sorting import sorting_vectors_by_norm_l2
+from clase_1.ex2_sorting import sorting_vectors_by_norm_l2
 
 
 class SortTestCase(TestCase):
