@@ -4,7 +4,9 @@ Ejercicios en Python del Curso Introduccion a IA
 
 ## Clase 01. Introduccion a AI. Python y Numpy para AI
 
-Ejecución de todos los testcases c/ pytest
+Cada ejercicio consiste en un módulo con clases y funciones y un test que lo verifica.
+
+Ejecución de todos los testcases c/ pytest:
 
 ~~~bash
 cd clase_1

@@ -8,7 +8,7 @@ class QueryMeanPrecisionAtK(BaseQueryMetric):
 
     def __call__(self, predicted_rank, truth_relevance, query_ids):
         # get count of queries with at least one true relevant document
-        true_relevance_mask = (truth_relevance == 1)
+        true_relevance_mask = (truth_relevance == 1) & (predicted_rank<self.k)
         filtered_query_id = query_ids[true_relevance_mask]
         filtered_true_relevance_count = np.bincount(filtered_query_id) # en las queries con relevance, cuento
         # complete the count of queries with zeros in queries without true relevant documents

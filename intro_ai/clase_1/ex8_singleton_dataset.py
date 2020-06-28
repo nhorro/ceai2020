@@ -10,7 +10,7 @@ class Singleton(type):
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
-class DatasetImpl:    
+class MovieRatingsDatasetImpl:    
     ds_struct = [
         ('userId', np.int64),
         ('movieId', np.int64),
@@ -27,8 +27,6 @@ class DatasetImpl:
              self.__load_from_csv()
         self.cursor = 0                
         
-    def size(self):
-        return self.records.shape[0] # 26024290
 
     def __load_from_csv(self):
         print(f"Loading from CSV {self.filename}")
@@ -39,13 +37,15 @@ class DatasetImpl:
             for row in results:
                 total_rows+=1
             print(f"Counted {total_rows} rows.")
-            self.records = np.empty(total_rows, dtype=np.dtype(DatasetImpl.ds_struct))
-            for row in results:
-                self.records[i]['userId'] = row[0]
-                self.records[i]['movieId'] = row[1]
-                self.records[i]['rating'] = row[2]
-                self.records[i]['timestamp'] = row[3]  
-                print( self.records[i] )
+            self.records = self.create_empty_records(total_rows)
+            csvfile.seek(0)
+            next(results)  # Skip header row.
+            for idx, row in enumerate(results):
+                self.records[idx]['userId'] = row[0]
+                self.records[idx]['movieId'] = row[1]
+                self.records[idx]['rating'] = row[2]
+                self.records[idx]['timestamp'] = row[3]  
+                #print( self.records[idx] )
             self.__dump()
     
     def __load_from_pkl(self, filename):
@@ -57,12 +57,23 @@ class DatasetImpl:
         pickle_filename = self.filename+".pkl"
         with open(pickle_filename, 'wb') as file:
             pickle.dump(self.records, file, protocol=pickle.HIGHEST_PROTOCOL)
-        print("Dumped to f{pickle_filename}")
+        print(f"Dumped to {pickle_filename}")
+    
+    def create_empty_records(self, n):
+        return np.empty(n, dtype=np.dtype(MovieRatingsDatasetImpl.ds_struct))
 
-    def __iter__(self):
-        while self.cursor < self.records.shape[0]:
-            yield self.records[self.cursor]
-            self.cursor += 1 
+    def size(self):
+        return self.records.shape[0] # 26024290
 
-class Dataset(DatasetImpl, metaclass=Singleton):
+    def get_record(self, idx):
+        return self.records[idx]
+
+
+def MovieRatingsDatasetGenerator(datasource):
+    cursor = 0
+    while cursor < datasource.size():
+        yield datasource.get_record(cursor)
+        cursor += 1 
+
+class MovieRatingsDataset(MovieRatingsDatasetImpl, metaclass=Singleton):
     pass
