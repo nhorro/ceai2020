@@ -7,7 +7,7 @@ from clase_1.ex6_avg_query_precision_at_k import QueryMeanPrecisionAtK
 
 class MetricsTestCase(TestCase):
 
-    def test_query_mean_precision(self):        
+    def test_query_mean_precision_at_k(self):        
     	# TODO
         q_id = np.array( [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4] )
         predicted_rank = np.array([0, 1, 2, 3, 0, 1, 2, 0, 1, 2, 3, 4, 0, 1, 2, 3])

@@ -1,0 +1,1 @@
+Por tamaño, los archivos ratings.csv y ratings.csv.pkl no se incluyen. El primero se puede descargar de [kaggle](https://www.kaggle.com/rounakbanik/the-movies-dataset/data?select=ratings.csv) y el segundo se genera automáticamente con la primera carga del dataset.
