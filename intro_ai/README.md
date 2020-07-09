@@ -17,5 +17,11 @@ Ejecución de un testcase en particular:
 
 ~~~bash
 cd clase_1
-pytest -s -v ex1_norm_test.py
+pytest -s -v ex8_singleton_dataset_test.py
 ~~~
+
+## Clase 02. Pipeline de Machine Learning
+
+Integración de las funciones y algoritmos vistos en "toy framework":
+
+
