@@ -22,6 +22,6 @@ pytest -s -v ex8_singleton_dataset_test.py
 
 ## Clase 02. Pipeline de Machine Learning
 
-[Notebook con ejercicios resueltos](./clase_2/Clase 02 - Ejercicios.ipynb)
+[Notebook con ejercicios resueltos](clase_2/Clase02.ipynb)
 
 
