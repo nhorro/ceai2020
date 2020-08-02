@@ -24,4 +24,18 @@ pytest -s -v ex8_singleton_dataset_test.py
 
 [Notebook con ejercicios resueltos](clase_2/Clase02.ipynb)
 
+## Clase 03. Regresión Lineal y organización de código OO
 
+[Notebook](clase_3/Clase03.ipynb)
+
+## Clases 04 y 05. Gradiente descendente, polynomial fit
+
+[Notebook](clase_5/Clase05.ipynb)
+
+## Clases 06. Regresión Logística
+
+[Notebook](clase_6/Clase06.ipynb)
+
+## Framework (integrador) 
+
+[libintroai](libintroai)
