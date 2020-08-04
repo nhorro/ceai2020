@@ -38,4 +38,6 @@ pytest -s -v ex8_singleton_dataset_test.py
 
 ## Framework (integrador) 
 
-[libintroai](libintroai)
+Ejercicios de las clases reorganizados en toy framework.
+
+[libintroia](libintroia)
