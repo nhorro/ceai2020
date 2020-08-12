@@ -59,3 +59,5 @@ class DataXY(Data):
     
     def _build_dataset(self,path,skip_header,delimiter):
         return np.genfromtxt(path, skip_header=skip_header, delimiter=delimiter)        
+
+    
