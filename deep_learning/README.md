@@ -8,4 +8,5 @@ Ejercicios en Python del Curso Aprendizaje Profundo
 
 ## Clase 02. Red neuronal vectorizada Mini Batch (numpy)
 
-[Notebook](clase_2/clase02.ipynb)
+[Notebook versión no OO](clase_2/clase02.ipynb)
+[Notebook versión OO (keritas)](clase_2/clase02-keritas.ipynb)
