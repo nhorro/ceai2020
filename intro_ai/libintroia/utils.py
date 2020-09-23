@@ -16,7 +16,7 @@ def plot_confusion_matrix(predicted,actual,title="Confusion Matrix"):
     plt.title(title) 
     labels=["True","False","True","False"]
     seaborn.set(font_scale=1.4)
-    ax = seaborn.heatmap(data, annot=True, cmap="YlGnBu", cbar_kws={'label': 'Scale'})
+    ax = seaborn.heatmap(data, annot=True, cmap="YlGnBu", cbar_kws={'label': 'Scale'}, fmt='g')
     ax.set_xticklabels(labels)
     ax.set_yticklabels(labels) 
     ax.set(ylabel="True Label", xlabel="Predicted Label")
