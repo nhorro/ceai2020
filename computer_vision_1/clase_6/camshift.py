@@ -6,12 +6,51 @@ import argparse
 
 MAIN_WINDOW_NAME = "Video"
 
+
+class HistogramPlot:
+    def __init__(self):
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_title('Histograma (HSV)')
+        self.ax.set_xlabel('Bin')
+        self.ax.set_ylabel('Freq')
+        self.lw = 3
+        self.alpha = 0.5
+        self.bins = 255
+        self.line_h, = self.ax.plot(np.arange(self.bins), np.zeros((self.bins,)), c='r', lw=self.lw, alpha=self.alpha)
+        self.line_s, = self.ax.plot(np.arange(self.bins), np.zeros((self.bins,)), c='g', lw=self.lw, alpha=self.alpha)
+        self.line_v, = self.ax.plot(np.arange(self.bins), np.zeros((self.bins,)), c='b', lw=self.lw, alpha=self.alpha)
+        self.ax.set_xlim(0, self.bins-1)
+        self.ax.set_ylim(0, 255)
+        self.ax.grid(which="Both")
+        self.ax.legend(['H','S','V'])
+        plt.ion()
+        plt.show()
+        pass
+
+    def update(self,hsv_frame):        
+        hist_h = cv.calcHist([hsv_frame],[0],None,[self.bins],[0.,255.])
+        hist_h =cv.normalize(hist_h,hist_h,0,255,cv.NORM_MINMAX)
+        
+        hist_s = cv.calcHist([hsv_frame],[1],None,[self.bins],[0.,255.])
+        hist_s = cv.normalize(hist_s,hist_s,0,255,cv.NORM_MINMAX)            
+        
+        hist_v = cv.calcHist([hsv_frame],[2],None,[self.bins],[0.,255.])
+        hist_v = cv.normalize(hist_v,hist_v,0,255,cv.NORM_MINMAX)
+
+        self.line_h.set_ydata(hist_h)
+        self.line_s.set_ydata(hist_s)
+        self.line_v.set_ydata(hist_v)
+        self.fig.canvas.draw()
+
+
 class Application:
     def __init__(self,args):
         self.mode = 'IDLE'
         self.has_roi = False
         self.args = args
         self.frame = None
+        self.histplot = HistogramPlot()
+
         pass
 
     def get_mode(self):
@@ -51,8 +90,10 @@ class Application:
             elif k == ord('x'):
                 self.mode = "SELECT_ROI"
 
-            if self.has_roi:
-                hsv = cv.cvtColor(self.frame, cv.COLOR_BGR2HSV)
+            hsv = cv.cvtColor(self.frame, cv.COLOR_BGR2HSV)
+            self.histplot.update(hsv)
+
+            if self.has_roi:                
                 dst = cv.calcBackProject([hsv],[0],self.roi_hist,[0,180],1)
                 cv.imshow(MAIN_WINDOW_NAME, self.frame)
                 ret, self.track_window = cv.CamShift(dst, self.track_window, self.term_crit)
@@ -70,6 +111,7 @@ class Application:
             
             # Read next frame
             ret, self.frame = self.cap.read()
+            self.histplot
 
         self.teardown()
 
@@ -90,13 +132,13 @@ class Application:
             cv.normalize(self.roi_hist,self.roi_hist,0,255,cv.NORM_MINMAX);
             self.track_window = (x,y,w,h)
 
-            plt.imshow(mask)
-            plt.title("Mask")
-            plt.show(block = False)
+            #plt.imshow(mask)
+            #plt.title("Mask")
+            #plt.show(block = False)
 
-            plt.hist(self.roi_hist)
-            plt.title("ROI Histogram")
-            plt.show(block = False)
+            #plt.hist(self.roi_hist)
+            #plt.title("ROI Histogram")
+            #plt.show(block = False)
 
         return True
             
@@ -109,5 +151,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     app = Application(args)
     app.run()
-
-
