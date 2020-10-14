@@ -100,8 +100,8 @@ class Application:
                 if ret:
                     x,y,w,h = self.track_window 
                     self.frame = cv.rectangle(self.frame, (x,y), (x+w,y+h), 255,2)
-                hsv = cv.rectangle(hsv , (x,y), (x+w,y+h), (0,0,255),4)                    
-                cv.imshow("BackProjection", hsv)                    
+                dst = cv.rectangle(dst , (x,y), (x+w,y+h), (0,0,255),4)
+                cv.imshow("BackProjection", dst)                    
 
             self.frame = cv.putText( self.frame, 
                      'MODE: '+ self.mode, 
