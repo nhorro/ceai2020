@@ -11,8 +11,11 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> organización
+=======
+>>>>>>> lio con git
 - [Notebook versión no OO](clase_2/clase02.ipynb)
 - [Notebook versión OO (keritas)](clase_2/clase02-keritas.ipynb)
 
@@ -62,7 +65,7 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
           -[Variational Autoencoder](https://www.siarez.com/projects/variational-autoencoder)
      - [Asymetric Variational Autoencoders](https://arxiv.org/pdf/1711.08352.pdf)
 
-=======
+
 [Notebook versión no OO](clase_2/clase02.ipynb)
 [Notebook versión OO (keritas)](clase_2/clase02-keritas.ipynb)
 <<<<<<< HEAD
@@ -150,6 +153,7 @@ Links:
     - [BiasVariance](http://scott.fortmann-roe.com/docs/BiasVariance.html)
     -[Variational Autoencoder](https://www.siarez.com/projects/variational-autoencoder)
     - [Asymetric Variational Autoencoders](https://arxiv.org/pdf/1711.08352.pdf)
+<<<<<<< HEAD
     - 
 >>>>>>> organización
 <<<<<<< HEAD
@@ -173,6 +177,8 @@ Links:
 >>>>>>> deep learning flask para clase7 y haar para cv1
 =======
 >>>>>>> organización
+=======
+>>>>>>> lio con git
 ### Clase 07 (16/10/2020).
 
 ### Clase 08 (23/10/2020).

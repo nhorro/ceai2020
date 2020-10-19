@@ -69,16 +69,11 @@ sudo firewall-cmd --reload
 La primera vez que se ejecuta el compose, se descargarán las imágenes e instanciarán los containers. Las bases de datos estarán vacíos.  Se deben seguir estos pasos para cargar las bases de datos y poner un modelo de ejemplo en producción.
 
 1. Conectarse a Jupyter.
-
 2. Abrir y ejecutar los siguientes notebooks en orden, siguiendo las instrucciones:
-
    - [01 - Setup.ipynb](http://localhost:10000/notebooks/01 - Setup.ipynb)
-
    - [02 - Model Development.ipynb](http://localhost:10000/notebooks/02 - Model Development.ipynb)
-
    - [03 - API Usage Example.ipynb](http://localhost:10000/notebooks/03 - API Usage Example.ipynb)
+3. Una vez cargados los datos, es posible inspeccionarlos en Grafana y Kibana, además de hacer predicciones consumiendo la API REST.
 
-     
-
-
+![](doc/assets/grafana-ss.png)
 
