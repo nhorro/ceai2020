@@ -13,8 +13,10 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
 
 ### Clase 03 (17/09/2020). Red neuronal en Keras
 
+Laboratorio:
+
 - [Notebook](clase_3/clase03 - Modelo de Clase 2 en Keras.ipynb)
-- [Notebook de clase (Collab/drive)](clase_3/01_Introducción_a_clasificación_con_Keras.ipynb)
+- [01 Introducción a la clasificación con Keras (Collab/drive)](clase_3/01_Introducción_a_clasificación_con_Keras.ipynb)
 
 ### Clase 04 (24/09/2020). DL con Keras
 
@@ -25,7 +27,9 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
 - Links:
    - [ROC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)
        - [Discrimination Threshold](https://www.scikit-yb.org/en/latest/api/classifier/threshold.html#discrimination-threshold)
+       - https://machinelearningmastery.com/plot-a-decision-surface-for-machine-learning/
        - [¿Qué es un Embedding?](https://www.youtube.com/watch?v=RkYuH_K7Fx4)
+       - [Cross Entropy](https://www.youtube.com/watch?v=tRsSi_sqXjI)
 
 ### Clase 05 (01/10/2020). DL / embeddings
 
@@ -59,7 +63,8 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
 
 ### Clase 07 (16/10/2020). Ejercicio integrador End to End
 
-- 
+- Laboratorio
+  - 
 
 ### Clase 08 (23/10/2020). Examen
 
@@ -67,4 +72,12 @@ Ejercicios en Python del Curso Aprendizaje Profundo.
 
 ## Otros links y recursos de interés
 
-- [Clarifiying exceptions and visualizing tensor operations](https://explained.ai/tensor-sensor/index.html)
+- Misceláenos
+  - [Clarifiying exceptions and visualizing tensor operations](https://explained.ai/tensor-sensor/index.html)
+- Autoencoders
+  - https://www.siarez.com/projects/variational-autoencoder
+- Análisis exploratorio
+  - para analisis exploratorio, tienen que conocer https://github.com/pandas-profiling/pandas-profiling
+  - medir correlacion no lineal: https://minepy.readthedocs.io/en/latest/
+- Debugging en Collab:
+  - https://colab.research.google.com/github/jakevdp/PythonDataScienceHandbook/blob/master/notebooks/01.06-Errors-and-Debugging.ipynb#scrollTo=GWQXnPjUfxD_
