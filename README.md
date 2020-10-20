@@ -11,3 +11,9 @@ Bimestre 2
 - [Aprendizaje Profundo](deep_learning)
 - [Visión por Computadora 1](computer_vision_1)
 - [Aprendizaje de Máquina 1](machine_learning_1)
+
+Bimestre 3
+
+- Natural Language Processing
+- Visión por Computadora 2](computer_vision_2
+- Aprendizaje de Máquina 2
