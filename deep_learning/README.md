@@ -17,6 +17,7 @@ Laboratorio:
 
 - [Notebook](clase_3/clase03 - Modelo de Clase 2 en Keras.ipynb)
 - [01 Introducción a la clasificación con Keras (Collab/drive)](clase_3/01_Introducción_a_clasificación_con_Keras.ipynb)
+  - Key points: clasificador básico, efecto de lr en Adam
 
 ### Clase 04 (24/09/2020). DL con Keras
 
