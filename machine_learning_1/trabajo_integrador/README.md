@@ -6,6 +6,8 @@ Este trabajo propone una solución sencilla de un ambiente autocontenido para pr
 
 [TOC]
 
+![concept](doc/assets/concept.png)
+
 Organización del proyecto:
 
 ~~~
