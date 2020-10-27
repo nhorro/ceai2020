@@ -14,6 +14,6 @@ Bimestre 2
 
 Bimestre 3
 
-- Natural Language Processing
-- Visión por Computadora 2](computer_vision_2
-- Aprendizaje de Máquina 2
+- [Natural Language Processing](nlp)
+- [Visión por Computadora 2](computer_vision_2)
+- [Aprendizaje de Máquina 2](machine_learning_2)
