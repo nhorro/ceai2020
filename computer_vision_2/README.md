@@ -28,24 +28,15 @@
 
 #### Ejercicio 1. 
 
-Ver [notebook](clase_1/CV2_01_Capas_convolucionales.ipynb)
+Ver [Notebook de Capas Convolucionales](clase_1/CV2_01_Capas_convolucionales.ipynb)
 
 #### Ejercicio 2.
 
-Ver [notebook](clase_1/CV2_02_red_cnn_simple.ipynb)
+Ver [Notebook Red CNN simple y visualización de capas](clase_1/CV2_02_red_cnn_simple.ipynb)
 
 #### Ejercicio 3.
 
-|                                | Dimensiones de activación | Tamaño de Activación | Cant. de parámetros |
-| ------------------------------ | ------------------------- | -------------------- | ------------------- |
-| Entrada                        |                           |                      |                     |
-| Conv2D(f=4, s=1,c=8, ‘same’)   |                           |                      |                     |
-| MaxPool(f=8, s=8)              |                           |                      |                     |
-| Conv2D(f=2, s=1, c=16, ‘same’) |                           |                      |                     |
-| MaxPool(f=4, s=4)              |                           |                      |                     |
-| Dense(salida=6)                |                           |                      |                     |
-
-Ver [notebook](clase_1/CV2_03_Modelo_convolucional_aplicacion_keras.ipynb)
+Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_convolucional_aplicacion_keras.ipynb)
 
 ## Clase 2. Viernes 30/10/2020
 
