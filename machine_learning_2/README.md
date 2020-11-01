@@ -6,7 +6,7 @@
 
 ### Keypoints
 
-- Notebook: Optimización de HPs.
+- Notebook: 
 - ¿Cómo elegimos los mejores hiperparámetros para nuestro problema?
   - ¿Qué es mejor? ¿Con respecto a exactitud? ¿Área bajo la curva ROC?
   - Paso 0. Definir métrica que quiero optimizar.
@@ -17,8 +17,27 @@
     - Held-Out (Test)
   - Random Search: va buscando combinaciones. Relación con K-Folds
     - Explicación de uso en Sklearn
+- Automated Hyperparameter Tuning
+  - Optimización Bayesiana. Se puede hacer en python con la biblioteca Hyperopt
+  - Algoritmos Genéticos. Se puede hacer en python con TPOT.
+  - ANN con Keras (con KerasClassifier)
+- Guía para ordenar ideas
+
+Tarea:
+
+- Mirar video Hyperparameter tuning - Tuning process
+
+Próxima clase:
+
+- Se trabajará en el notebook de clase
+
+Recursos (ver PPT para links)
 
 
+
+Comentarios finales:
+
+- Recordar que los prácticos se pueden entregar hasta el 6.
 
 ### Clase 2. 
 

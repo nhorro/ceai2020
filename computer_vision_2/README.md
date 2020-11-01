@@ -42,11 +42,44 @@ Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_
 
 ### Key points
 
-- TBD
+- Plan:
+  - Experimento: Pooling vs No usar Pooling
+  - Dataset de Kaggle reducido. Primer intento de tener una red que clasifique perros y gatos.
+  - Kahoot.
+    - Para el 1er Kahoot tener fórmulas a mano.
+  - Arquitecturas clásicas: LeNet, AlexNet
+- Repaso clase pasada:
+  - 3 capas importantes: conv, pool, fc. Repaso fórmulas para calcular HPs y output shape de cada tipo de capa.
+- Ejercicio: https://colab.research.google.com/drive/135L0rpSA6RUXBKLsDUzzJ6hUgPvkap_-
+- Kahoot preguntas de redes
+- Break
+- Data Augmentation con PCA
+- LeNet
+  - Ejercicio: implementar LeNet-5
+- AlexNet
+  - Características principales:
+    - Rectified Linear Units (RELU)
+    - Uso de múltiples GPU 
+    - Dropout
+    - Local Response Normalization, no tan usado hoy
+    - Capas pool con ventanas superpuestas
+    - Data augmentation
 
 ### Tarea
 
-- TBD
+- En pool vs no pool agregar uno o dos bloques más con y sin pool  para ver si hay diferencia en la performance.
+- Entrenar la red para perros y gatos y ver qué accuracy pueden obtener
+- Implementar LeNet-5 con MNIST en Keras.
+
+#### Bonus
+
+- Leer capítulo de Goodfellow et al. +  consultar machete.
+- Papers originales.
+
+### Próxima clase
+
+- Redes residuales. ¿Cómo podemos hacer redes más profundas?
+- Transfer Learning.
 
 ## Clase 3. Viernes 06/11/2020
 
@@ -98,7 +131,7 @@ Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_
 
 - TBD
 
-## Clase 8. Viernes 11/12/2020 (Examen)
+## Clase 8. Viernes 11/12/2020 (examen/proyecto final)
 
 
 
