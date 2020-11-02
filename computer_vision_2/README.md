@@ -67,14 +67,17 @@ Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_
 
 ### Tarea
 
-- En pool vs no pool agregar uno o dos bloques más con y sin pool  para ver si hay diferencia en la performance.
-- Entrenar la red para perros y gatos y ver qué accuracy pueden obtener
-- Implementar LeNet-5 con MNIST en Keras.
+- En pool vs no pool agregar uno o dos bloques más con y sin pool para ver si hay diferencia.
+- Entrenar la red para perros y gatos y ver qué accuracy pueden obtener.
+- Implementar LeNet-5 y utilizarla en MNIST.
 
 #### Bonus
 
-- Leer capítulo de Goodfellow et al. +  consultar machete.
-- Papers originales.
+- Leer el capítulo de redes convolucionales del libro de Goodfellow et al.
+  https://www.deeplearningbook.org/contents/convnets.html
+- Otro machete:
+  https://github.com/afshinea/stanford-cs-230-deep-learning/blob/master/en/cheatsheet-convolut
+  ional-neural-networks.pdf
 
 ### Próxima clase
 
