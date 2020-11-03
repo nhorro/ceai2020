@@ -67,9 +67,23 @@ Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_
 
 ### Tarea
 
+#### Ejercicio 1.
+
 - En pool vs no pool agregar uno o dos bloques más con y sin pool para ver si hay diferencia.
+
+[Notebook](clase_2/CV2_Clase_2_01_Con_pool_vs_sin_pool.ipynb)
+
+#### Ejercicio 2
+
 - Entrenar la red para perros y gatos y ver qué accuracy pueden obtener.
+
+[Notebook](clase_2/CV2_Clase_2_02_Dataset_y_data_augmentation.ipynb)
+
+#### Ejercicio 3
+
 - Implementar LeNet-5 y utilizarla en MNIST.
+
+[Notebook](clase_2/CV2_Clase_2_03_Lenet5Mnist.ipynb)
 
 #### Bonus
 
