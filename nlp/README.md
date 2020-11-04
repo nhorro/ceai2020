@@ -36,7 +36,7 @@
   1. G.D con decaimiento lineal en alpha
   2. First Order Momentum
   3. AdaGrad (Adaptative Gradient)
-  4. RMSProp
+  4. RMSProp (Root Mean Square Propagation) (01:32)
   5. Adam (2014) (Adaptative Moments 
 - Métodos que usan H )Hessian)
   - Newton
