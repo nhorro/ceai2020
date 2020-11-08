@@ -102,11 +102,40 @@ Ver [Notebook Aplicación Keras y cálculo manual de HPs](clase_1/CV2_03_Modelo_
 
 ### Key points
 
-- TBD
+- VGG-16
+  - ILSVRC 2014
+- Keras, método funcional de armar redes (ver diapo)
+  - Definir input: 
+  - Definir capas ocultas
+  - Definir outputs
+  - Instanciar el modelo
+- Primer laboratorio: https://colab.research.google.com/drive/1s7dZNm-b5egx65NuDoM57VtmrrEwFP7W
+  - Escribir VGG usando Keras functional.
+- Problemas al entrenar redes muy profundas
+  - Gradientes que explotan o tienden a cero
+    - Para este problema es común usar Batch Normalization
+  - Degradación de la performance de entrenamiento
+    - Vamos a ver Redes residuales para esto.
+- Batch Normalization
+- Redes residuales
+- Bloque residual
+- Transfer learning
 
 ### Tarea
 
-- TBD
+#### Ejercicio 1. 
+
+Ver [Notebook VGG16 con Keras Functional](clase_3/CV2_Clase3_01_VGG16_con_Keras.ipynb)
+
+#### Ejercicio 2.
+
+Ver [Notebook Red Normal vs ResNet](clase_3/CV2_Clase_03_02_red_normal_vs_resnet.ipynb)
+
+#### Ejercicio 3.
+
+Ver [Notebook Transfer Learning con Keras](clase_3/CV2_Clase03_03_Transfer_Learning_Keras.ipynb)
+
+
 
 ## Clase 4. Viernes 13/11/2020
 

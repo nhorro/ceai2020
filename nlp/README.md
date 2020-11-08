@@ -51,3 +51,79 @@
   - ¿Cómo podemos usar estas representaciones para calcular similitudes?
     - Similitud coseno (cosine simlarity) <Doc1, Doc2>
 
+### Tarea
+
+- Ver [Notebook](clase_1/Clase01.ipynb)
+
+## Clase 2. Sábado 07/10/2020
+
+### Key points
+
+- La clase pasada se vieron documentos, esta vez se hará foco en encontrar mejores representaciones de las palabras (representaciones densas).
+
+- Veremos dos arquitecturas para aprender representaciones densas:
+
+  1. Continuous Bag of Words
+
+  Mención: GloVe y Fasttex
+
+- La clase que viene veremos como implementarlo en Keras.
+
+- Tareas de Language Processing.:
+
+  - Spell Checking, Keyword search, synonyns
+  - Extract Information (invoice, legal)
+  - Translation, Semantic Analysis, NER,Q&A
+
+- Nota. Ya existen datasets para las tareas anteriores.
+
+- ¿Cómo representar palabras? -> Word Embeddings
+
+- Redes neuronales simples: GloVE, FastText
+
+- Recurrentes
+
+- Seq2Seq
+
+- Avanzadas ElMO, BERT
+
+- Representaciones de palabras
+
+  - One-hot Vector
+    - No hay concepto de similaridad
+  - SVD (Singular Value Decomposition)
+    - X = USV.T
+    - Idea: utilizar filas de U como los embeddings de las palabras
+
+- Deep Learning Word2Vec
+
+  - Arquitecturas:
+
+    - CBOW = Continuous Bag of Words
+    - Skip-gram
+    - Concepto (ejemplo con frase): 
+      - doc "The dog wants the ball"
+        - En CBOW quiero hallar 'wants' habiendo pasado 'the','dog', ?, 'the', 'ball'
+        - En Skipgram es exactamente al revés, paso 'wants' y quiero encontrar ?,?,'wants',?,?
+
+  - Cross Entropy(Loss)
+
+  - SGD|Mini Batch + Negative Sampling
+
+  - ML Supervisado
+
+  - En todos los casos el objetivo es aprender los embeddings
+
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
