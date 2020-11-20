@@ -10,7 +10,7 @@ ENV GF_PANELS_DISABLE_SANITIZE_HTML true
 
 ENV GF_DASHBOARDS_MIN_REFRESH_INTERVAL 1s
 
-ENV GF_INSTALL_PLUGINS grafana-clock-panel,grafana-simple-json-datasource,ryantxu-ajax-panel,novalabs-annotations-panel,briangann-datatable-panel,agenty-flowcharting-panel,aidanmountford-html-panel,natel-influx-admin-panel,pierosavi-imageit-panel,mtanda-histogram-panel,btplc-status-dot-panel, mxswat-separator-panel,scadavis-synoptic-panel,natel-plotly-panel
+ENV GF_INSTALL_PLUGINS grafana-clock-panel,grafana-simple-json-datasource,ryantxu-ajax-panel,novalabs-annotations-panel,briangann-datatable-panel,agenty-flowcharting-panel,aidanmountford-html-panel,natel-influx-admin-panel,pierosavi-imageit-panel,mtanda-histogram-panel,btplc-status-dot-panel, mxswat-separator-panel,scadavis-synoptic-panel,natel-plotly-panel,innius-video-panel
 
 ADD --chown=grafana:grafana datasources/ /etc/grafana/provisioning/datasources/
 ADD --chown=grafana:grafana dashboards.yml /etc/grafana/provisioning/dashboards/

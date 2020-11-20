@@ -55,7 +55,7 @@
 
 - Ver [Notebook](clase_1/Clase01.ipynb)
 
-## Clase 2. Sábado 07/10/2020
+## Clase 2. Sábado 07/11/2020
 
 ### Key points
 
@@ -116,14 +116,30 @@
 
     
 
-  
+  ## Clase 3. Sábado 14/11/2020
 
-  
+  ### Key points
 
+  - Repaso lo visto hasta ahora en clase.
+  - Estamos yendo de embeddings por palabras a embeddings contextuales.
+  - Laboratorio.
+  - Introducción gensim.https://radimrehurek.com/gensim/
+    - Mención de otras libs de interés:
+    - https://spacy.io/
+      - https://www.nltk.org/
+    - Notebook Word2Vec 
+      - Colab(drive): https://colab.research.google.com/drive/1FRRMcYEEkscnjMG36212CxdI_o5ynVt9
+      - Mención:
+        - [umap](https://umap-learn.readthedocs.io/en/latest/)
+        - [tsne](https://distill.pub/2016/misread-tsne/)
+        - gráficos (plotly/dash): https://plotly.com/dash/
+        - wikipedia 103 millones de articulos, tiene 267k palabras (nosotros usamos 2k )
+          https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/ 
   
-
   
-
   
-
+  
+  
+  
+  
   

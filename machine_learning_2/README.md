@@ -66,11 +66,45 @@ Comentarios finales:
 
 - Sumarle al TP de ML1 agregarle 2 temas de los vistos en ML2
 
-### Clase 3. 
+### Clase 3. Jueves 12/11/2020. Redución de Dimensiones Parte 1
 
 ### Keypoints
 
-
+- Aprendizaje no supervisado
+  - Clustering
+  - Reducción de dimensionalidad
+- Reducción de la  dimensionalidad
+  - ¿Para qué sirve?
+    - Reducir el input en un modelo de regresión o clasificación.
+    - Compresión de archivos.
+    - Visualización
+    - Detectar features relevantes en datasets
+    - Muchísimas más cosas
+  - ¿Cómo se hace?
+    - PCA: Principal Component Analysis (usa SVD)
+    - MDS: Multidimensional tscaling
+    - t-SNE: t-distributed Stochastic Neighbor Embedding
+    - Autoencoders
+    - Discriminant Analysis
+  - SVD (Singular Value Decomposition)
+    - Definición. Buscamos representar cualquier matriz en términos de la multiplicación de otras 3.
+    - Hiperparámetro R
+    - Representación gráfica de SVD
+  - ¿Son SVD y PCA lo mismo?
+    - Casi, pero no. La única diferencia es que 
+      - PCA = Centrar datos + SVD truncado.
+      - Debemos primero sustraer la media de cada columna de features antes de poder aplicar el SVD truncado.
+  - PCA
+    - PCA es el método de reducción de dimensiones más utilizado.
+    - Importancia
+      - Matemáticamente, se puede llegar por otro camino (Matriz de covarianza)
+      - Tiene una interpretación muy intuitiva:
+        - Componentes Principales
+        - Direccones de máxima varianza
+  - Laboratorio:
+    - Notebook PCA
+      - Ingeniería de features, correlación Pearson.
+      - MNIST Reducir dimensiones preservando 95% de varianza ¿Qué mejoras puedo obtener con PCA? Reducción de tiempo de cómputo, entrenamiento, etc.
 
 ### Clase 4. 
 

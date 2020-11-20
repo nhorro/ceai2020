@@ -135,17 +135,47 @@ Ver [Notebook Red Normal vs ResNet](clase_3/CV2_Clase_03_02_red_normal_vs_resnet
 
 Ver [Notebook Transfer Learning con Keras](clase_3/CV2_Clase03_03_Transfer_Learning_Keras.ipynb)
 
-
-
 ## Clase 4. Viernes 13/11/2020
 
 ### Key points
 
-- TBD
+- ResNet. 
+  - Versiones de ResNet50
+  - Explicación: uso de convolución en Skip Connection para reducir la dimensión.
+  - Ejercicio de Programación: link?
+- Red Inception
+  - Concepto: múltiples operaciones a la vez en un mismo bloque.
+  - Reducción de necesidad de cómputo utilizando convolución 1x1
+  - Ejercicio de programación: https://colab.research.google.com/drive/1oA6MFtQXWo_xAWbqbm2wWVDKnwrqTPuy
+- Tareas de visión por computadora:
+  - Clasificación
+  - Localización
+  - Clasificación + Localización
+  - Detección (múltiples objetos de múltiples categorías)
+- Medidas de evaluación:
+  - mAP: mean Average Precision para detección de objetos (hay otra definición para document retrieval)
+  - El algoritmo debe encontrar los objetos (ubicarlos en bounding boxes) y clasificarlos.
+  - Tenemos que evaluar cuán correctas son las bounding boxes y cuán correcta es la clasificaciónDescripción original, página 11 de: http://homepages.inf.ed.ac.uk/ckiw/postscript/ijcv_voc09.pdf
+  - Curvas de Precision/Recall
+- ¿Cómo implementar sliding windows de manera convolucional?
+- Intersection over Union (o Jaccard Index)
+- YOLO
+  - Grilla:
+    - Cada celda de la grilla se representa por un vectorUn objeto es asignado a una celda si su centro está dentro de ella
+    - Volumen de salida: #celdas_w x #celdas_h x (1 + 4 + #clases)
+    - Comparado a sliding windows:
+      - permite determinar una bounding box mucho más precisa
+      - Es convolucional
+  - Anchor boxes
+- Trabajo Final:
+  - Competencia de Metadata:https://metadata.fundacionsadosky.org.ar/competition/22/
+  - Para el trabajo final hay que hacer un modelo para este problema, en grupos de 3 o 4 personas
 
 ### Tarea
 
-- TBD
+#### Ejercicio 1. 
+
+- Ver [Notebook resnet50_en_keras](clase_4/CV2_Clase04_resnet50_en_keras.ipynb)
 
 ## Clase 5. Viernes 20/11/2020 
 
