@@ -135,7 +135,7 @@ Ver [Notebook Red Normal vs ResNet](clase_3/CV2_Clase_03_02_red_normal_vs_resnet
 
 Ver [Notebook Transfer Learning con Keras](clase_3/CV2_Clase03_03_Transfer_Learning_Keras.ipynb)
 
-## Clase 4. Viernes 13/11/2020
+## Clase 4. Martes 17/11/2020
 
 ### Key points
 
