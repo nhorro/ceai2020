@@ -123,9 +123,9 @@
   - Repaso lo visto hasta ahora en clase.
   - Estamos yendo de embeddings por palabras a embeddings contextuales.
   - Laboratorio.
-  - Introducción gensim.https://radimrehurek.com/gensim/
+    - Introducción gensim.https://radimrehurek.com/gensim/
     - Mención de otras libs de interés:
-    - https://spacy.io/
+      - https://spacy.io/
       - https://www.nltk.org/
     - Notebook Word2Vec 
       - Colab(drive): https://colab.research.google.com/drive/1FRRMcYEEkscnjMG36212CxdI_o5ynVt9
@@ -135,11 +135,21 @@
         - gráficos (plotly/dash): https://plotly.com/dash/
         - wikipedia 103 millones de articulos, tiene 267k palabras (nosotros usamos 2k )
           https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/ 
+  - Comentarios Slack:
+  - animacion 3d de las proyecciones: https://projector.tensorflow.org/ (editado) 
+  - Hola! Queria invitarlos a que prueben la técnica UMAP y su visualización con los datos del black friday a ver que les aparece, y luego lo comparen con PCA, me parece super importante que conozcan ambas técnicas y sus diferencias.
+    Casi no tendrian esfuerzo, porque la evaluación final (que todavia les debemos el feedback), necesitaron todas las variables numéricas y sin nulos (requisito de UMAP y PCA)
+    Proyecten en 2 dim y compartan aca el resultado, me consultan cualquier cosa!
+    Esto es no supervisado, Como regla practica elijo proyecciones que tengan “islas”:
+    Se “suele” buscar eso :apuntando_hacia_arriba:  a esto :apuntando_hacia_abajo:
+    Web oficial con ejemplos: https://umap-learn.readthedocs.io/en/latest/basic_usage.html
+  
+  ### Tarea
+  
+  - Ver [Notebook Word2Vec](clase_3/NLP_Clase3_01_Word2Vec.ipynb)
   
   
   
+  ## Clase 4. Sábado 20/11/2020
   
-  
-  
-  
-  
+  ### Key points
