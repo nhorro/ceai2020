@@ -181,7 +181,21 @@ Ver [Notebook Transfer Learning con Keras](clase_3/CV2_Clase03_03_Transfer_Learn
 
 ### Key points
 
-- TBD
+- Clase pasada vimos YOLO, pero no profundizamos en detalles del algoritmo.
+- Plan:
+  - Uso de YOLO
+  - Intro a Reinforcement Learning
+- Arquitectura YOLO v1
+- Versiones de YOLO, comparativa
+- Comentarios sobre Trabajo Final
+- Intro a Reinforcement Learning
+  - Idea
+  - Repaso Modelos de Markov
+  - Cadenas de Markov con recompensa.
+  - Función de valor
+  - Ecuación de Bellman
+  - Política
+  - 
 
 ### Tarea
 

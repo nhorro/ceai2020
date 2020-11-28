@@ -116,26 +116,26 @@
 
     
 
-  ## Clase 3. Sábado 14/11/2020
+## Clase 3. Sábado 14/11/2020
 
-  ### Key points
+### Key points
 
-  - Repaso lo visto hasta ahora en clase.
-  - Estamos yendo de embeddings por palabras a embeddings contextuales.
-  - Laboratorio.
-    - Introducción gensim.https://radimrehurek.com/gensim/
-    - Mención de otras libs de interés:
-      - https://spacy.io/
-      - https://www.nltk.org/
-    - Notebook Word2Vec 
-      - Colab(drive): https://colab.research.google.com/drive/1FRRMcYEEkscnjMG36212CxdI_o5ynVt9
-      - Mención:
-        - [umap](https://umap-learn.readthedocs.io/en/latest/)
-        - [tsne](https://distill.pub/2016/misread-tsne/)
-        - gráficos (plotly/dash): https://plotly.com/dash/
-        - wikipedia 103 millones de articulos, tiene 267k palabras (nosotros usamos 2k )
-          https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/ 
-  - Comentarios Slack:
+- Repaso lo visto hasta ahora en clase.
+- Estamos yendo de embeddings por palabras a embeddings contextuales.
+- Laboratorio.
+  - Introducción gensim.https://radimrehurek.com/gensim/
+  - Mención de otras libs de interés:
+    - https://spacy.io/
+    - https://www.nltk.org/
+  - Notebook Word2Vec 
+    - Colab(drive): https://colab.research.google.com/drive/1FRRMcYEEkscnjMG36212CxdI_o5ynVt9
+    - Mención:
+      - [umap](https://umap-learn.readthedocs.io/en/latest/)
+      - [tsne](https://distill.pub/2016/misread-tsne/)
+      - gráficos (plotly/dash): https://plotly.com/dash/
+      - wikipedia 103 millones de articulos, tiene 267k palabras (nosotros usamos 2k )
+        https://blog.einstein.ai/the-wikitext-long-term-dependency-language-modeling-dataset/ 
+- Comentarios Slack:
   - animacion 3d de las proyecciones: https://projector.tensorflow.org/ (editado) 
   - Hola! Queria invitarlos a que prueben la técnica UMAP y su visualización con los datos del black friday a ver que les aparece, y luego lo comparen con PCA, me parece super importante que conozcan ambas técnicas y sus diferencias.
     Casi no tendrian esfuerzo, porque la evaluación final (que todavia les debemos el feedback), necesitaron todas las variables numéricas y sin nulos (requisito de UMAP y PCA)
@@ -143,13 +143,45 @@
     Esto es no supervisado, Como regla practica elijo proyecciones que tengan “islas”:
     Se “suele” buscar eso :apuntando_hacia_arriba:  a esto :apuntando_hacia_abajo:
     Web oficial con ejemplos: https://umap-learn.readthedocs.io/en/latest/basic_usage.html
-  
-  ### Tarea
-  
-  - Ver [Notebook Word2Vec](clase_3/NLP_Clase3_01_Word2Vec.ipynb)
-  
-  
-  
-  ## Clase 4. Sábado 20/11/2020
-  
-  ### Key points
+- Mail adicional: Clase 3 - Detalle de CBOW y SKIP-GRAM
+
+### Tarea
+
+- Ver [Notebook Word2Vec](clase_3/NLP_Clase3_01_Word2Vec.ipynb)
+
+
+
+## Clase 4. Sábado 28/11/2020
+
+### Key points
+
+#### Parte 1. Embeddings
+
+- GloVE y FastText. 
+  - Ejemplo con librerías en python. [Notebook](clase_4/NLP_Clase_4_Sabado_28_11_2020_Word2Vec_y_RNN.ipynb)
+    - Distancia entre palabras, heatmap usando:
+      - https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cdist.html
+- CBOW y SkipGram. 
+  - Repaso: objetivo de cada uno (predecir palabra central vs. predecir contexto), función de costo de cada uno. Interpretación de capa final Softmax.
+- Negative Sampling
+  - Ejemplo tomando el caso de SkipGram.
+  - Porqué: para reducir la cantidad de parámetros que tengo que calcular en el gradiente de la función de costo.
+  - Simplificaciones:
+    1. Paso de GD a SGD.
+    2. ¿Podemos pensar el problema como Bernoulli?
+       - Creemos una variable D y digamos que:
+         - D=1 cuando una palabra está en el contexto.
+         - D=0 cuando una palabra NO está en el contexto.
+       - P(D=1) = p, P(D=0) = 1 - p
+       - Por cada fila de nuestro dataset observamos H palabras negativas que no pertenecen a ese contexto (H es un hiperparámetro, ej: 50)
+  - Evaluación de Embeddings. 2 maneras:
+    - **Extrínseca**: Los evalúo de manera indirecta a través de resolver un ejemplo de NLP más grande. Ej: entrenar un clasificador de sentimiento y evaluar positivo/negativo y calcular para ese clasificador el AUC para distintos embeddings.
+    - **Intrínseca**: Analogías. a:b, c:?
+
+#### Parte 2. RNNs
+
+- Motivación: dada una secuencia de símbolos X0..Xn, queremos saber la probabilidad de p(Xi) habiendo ocurrido anteriormente antes p(Xo0),p(Xo1),...,p(XoN). 
+- Enfoque clásico.
+- Enfoque Deep Learning.
+  - Arquitecturas tradicionales
+  - 

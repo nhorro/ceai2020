@@ -106,11 +106,20 @@ Comentarios finales:
       - Ingeniería de features, correlación Pearson.
       - MNIST Reducir dimensiones preservando 95% de varianza ¿Qué mejoras puedo obtener con PCA? Reducción de tiempo de cómputo, entrenamiento, etc.
 
-### Clase 4. 
+### Clase 4. Martes 24/11/20. Reducción de dimensiones Parte 2 y Arquitecturas Cloud
 
 ### Keypoints
 
-
+- Reducción de dimensiones. 
+  - t-SNE (T-distributed Stochastic Neighbor Embedding
+    - minimización divergencia Kullback-Leibler
+    - Intuición: t-SNE intenta reproducir la distribución existente en el espacio original en el espacio final.
+    - Scikit-Learn lo implementa en sklearn.manifold.TSNE:
+      - n_components (2 por defecto): Dimensiones
+      - perplexity
+      - early_exaggeration
+      - learning_rate
+- Arquitecturas Cloud
 
 ### Clase 5. 
 
