@@ -184,4 +184,19 @@
 - Enfoque clásico.
 - Enfoque Deep Learning.
   - Arquitecturas tradicionales
-  - 
+  - (sigue en tablet)
+
+
+
+## Clase 5. Sábado 05/12/2020
+
+### Key points
+
+- Repaso de la última clase. Hasta ahora hemos visto Embeddings de palabras y frases y una intro a RNN.
+- Desarrollo progresivo de RNNs
+  - RNN, Neurona básica.
+  - Bidirectional NN (BNN)
+  - Vanishing/Exploding Gradients y su solución.
+  - LSTM
+  - Seq2Seq Encoder/decoder. Aplic. Traducciones, chatbot.
+
