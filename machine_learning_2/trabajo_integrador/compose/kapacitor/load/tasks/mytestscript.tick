@@ -1,0 +1,45 @@
+// ============================================================
+// Generic TICK example for multivariate transforms
+// ============================================================
+
+dbrp "my_application"."autogen"
+
+// Section 0. Parameters
+var tolerance = 1s
+var output_dbname = 'my_application'
+var output_variable_name = 'TMV_VAR_GENERATED6'
+
+// Section 1. Input variables
+var x0 = stream |from()
+	.measurement('TMV_VAR0')
+var x1 = stream |from()
+	.measurement('TMV_VAR1')
+var x2 = stream |from()
+	.measurement('TMV_VAR2')
+
+// Section 2. Transformation
+x0 
+|join(x1,x2) // 2.1
+	.as('x0', 'x1', 'x2') // 2.2
+	.tolerance(tolerance)
+|eval( 
+	lambda: 
+	// 2.3 
+    	if ( 
+        	// expl2tick()
+			"x0.value" < "x1.value",
+            
+            // true
+            1000.0 + "x0.value" + "x1.value" + "x2.value",
+            
+            // false
+            -1000.0 + "x0.value" + "x1.value" + "x2.value"
+        )
+	
+    // 
+)
+	.keep()
+	.as('dvalue')
+|influxDBOut()
+	.database(output_dbname)
+	.measurement(output_variable_name)

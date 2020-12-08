@@ -34,6 +34,10 @@ Los servicios incluídos son:
 
 ### Ejecución
 
+Nota: si está habilitado kapacitor c/ UDF, crear el directorio para el socket de comunicación:
+
+```mkdir /tmp/comm```
+
 Para iniciar los servicios cambiar al directorio compose y ejecutar:
 ```./up.sh ```
 

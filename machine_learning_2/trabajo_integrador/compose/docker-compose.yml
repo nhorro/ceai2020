@@ -1,0 +1,192 @@
+version: '3.7'
+
+services:
+  #----------------------------------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
+    ports:
+        - target: 9200
+          published: 9200
+          protocol: tcp
+        - target: 9300
+          published: 9300
+          protocol: tcp
+    environment:           
+        discovery.type: single-node
+    ulimits:
+        memlock:
+            soft: -1
+            hard: -1
+    volumes:
+        - type: volume
+          source: elasticsearch.data
+          target: /usr/share/elasticsearch/data
+    networks:
+      - mynetwork
+
+  kibana:
+    depends_on:
+        - elasticsearch
+    image: docker.elastic.co/kibana/kibana:7.9.1
+    ports:
+        - target: 5601
+          published: 5601
+          protocol: tcp
+    volumes:
+        - type: volume
+          source: kibana.data
+          target: /usr/share/kibana/data
+    environment:
+        SERVER_NAME: kibana
+        ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    networks:
+      - mynetwork        
+
+  influxdb:
+    build:
+        context: ./influxdb
+    volumes:
+         - type: volume
+           source: influxdb.data
+           target: /var/lib/influxdb
+    ports:
+         - "8086:8086/tcp"
+    networks:
+      - mynetwork            
+
+  grafana:
+    build:
+      context: ./grafana
+    volumes:
+      - type: bind
+        source: ./grafana/dashboards/
+        target: /dashboards
+      - type: volume
+        source: grafana.data
+        target: /var/lib/grafana
+      - type: volume
+        source: grafana.log
+        target: /var/log/grafana
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+    networks:
+      - mynetwork   
+
+  jupyter:
+    build:
+      context: ./jupyter
+    volumes:
+      - type: bind
+        source: ../notebooks
+        target: /home/jovyan/work
+      - type: bind
+        source: ../data
+        target: /data        
+      - type: bind
+        source: ../models
+        target: /models
+    environment:
+        JUPYTER_ENABLE_LAB: "yes"
+    entrypoint: ["jupyter", "notebook", "--NotebookApp.token=''", "--NotebookApp.password=''", "--notebook-dir=/home/jovyan/work"] #"--allow-root"
+    ports:
+      - target: 8888
+        published: 10000
+        protocol: tcp
+    networks:
+      - mynetwork  
+
+  # Kapacitor UDF
+  kapacitor_udf:
+    build:
+      context: ./kapacitor_udf   
+    volumes:
+      - type: bind
+        source: "/tmp/comm/"
+        target: "/tmp/comm/"
+    networks:
+        - mynetwork     
+
+  # Kapacitor
+  kapacitor:
+    image: kapacitor:latest
+    depends_on:
+        - kapacitor_udf       
+    environment:
+      KAPACITOR_HOSTNAME: kapacitor
+      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
+    volumes:
+      - type: volume
+        source: kapacitor.data
+        target: /var/lib/kapacitor
+      - type: bind
+        source: $PWD/kapacitor/kapacitor.conf
+        target: /etc/kapacitor/kapacitor.conf
+      - type: bind
+        source: $PWD/kapacitor/load
+        target: "/root/.kapacitor/load"
+      - type: bind
+        source: "/tmp/comm/"
+        target: "/tmp/comm/" 
+    links:
+      - influxdb
+    ports:
+      - "9092:9092"
+    networks:
+        - mynetwork  
+
+  chronograf:
+    image: chronograf:latest
+    volumes:
+        - type: volume
+          source: chronograf.data
+          target: /var/lib/chronograf
+    ports:
+      - "8888:8888/tcp"   
+    networks:
+        - mynetwork      
+  
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer.data:/data        
+
+  # kapacitor + cronograf
+  
+  #
+  modelservice:
+    build:
+      context: ./api
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ../models
+        target: /models        
+    environment:
+        PRODUCTION_MODEL_FILENAME: "production.pkl"
+    networks:
+      - mynetwork      
+
+networks:
+  mynetwork:
+    driver: bridge        
+
+volumes:
+    elasticsearch.data:    
+    grafana.data:
+    kapacitor.data:
+    chronograf.data:
+    grafana.log:
+    kibana.data:
+    influxdb.data:
+    portainer.data:
