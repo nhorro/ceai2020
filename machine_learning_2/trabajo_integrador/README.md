@@ -4,25 +4,33 @@ Este trabajo es la continuación del [Trabajo Final Integrador de Machine Learni
 
 - **Arquitectura de microservicios**: 
   - Se agrega una cadena de procesamiento de detección de anomalías en tiempo real utilizando:
-    - Un servicio que publica datos periódicamente. Por no disponer de datos reales, en este caso es un "mock" que publica muestras del test set elegidas aleatoriamente (actualizando la fecha).
+    - Un servicio que publica datos periódicamente. Por no disponer de datos reales, en este caso es un "mock" que publica muestras del test set elegidas aleatoriamente (actualizando la fecha de cada nueva muestra generada a la hora actual).
     - El servicio Kapacitor como sistema de monitoreo y alerta en tiempo real configurado para comunicarse con UDF (User Defined Functions) por medio de sockets.
     - Un servicio que implementa la API de UDF de Kapacitor por socket para conectarlo con modelos propios.
   - Se incorpora Cronograf como administrador de tareas de Kapacitor.
   - Se incluye tensorflow-serving para servir modelos basados en Tensorflow/Keras y un ejemplo de comunicación del servicio UDF de Kapacitor con este último.
+- **Manejo de datos imbalanceados**: se aplican técnicas de [SMOTE: Synthetic Minority Over-sampling Technique](https://arxiv.org/pdf/1106.1813.pdf) utilizando la librería [imbalanced-learn](https://imbalanced-learn.org) para mejorar el tratamiento de los datos imbalanceados.
 - **Hyperparameter Tuning**: 
-  - Se reemplaza el mecanismo ad-hoc de búsqueda de parámetros utilizado en la versión anterior de este trabajo por librerías standard.
+  - Se reemplaza el mecanismo ad-hoc de búsqueda de parámetros.
 - **Modelos de Ensamble**: 
   - Se incorporan modelos de ensamble que utilizan distintas técnicas: Bagging, Boosting y Stacking.
-
-Este trabajo propone una solución sencilla de un ambiente autocontenido para prototipado de modelos de Machine Learning en lenguaje Python basada en microservicios con docker-compose.  El foco está en poder ejercitar el proceso completo desde el desarrollo de modelos hasta su puesta en producción con fines didácticos, de prueba de concepto o académicos. Por lo tanto, hay muchos aspectos que están simplificados y no se pone atención a gestión de usuarios y permisos, performance, redundancia, disponibilidad, escalabilidad, etc. y no es apto para producción.
+- **Otros**: eliminación de código ad-hoc que se puede resolver con los métodos de librerías standard (ejemplo, uso de Pipelines de SKLearn).
 
 ## Contenido
 
 [TOC]
 
+## Descripción general y alcance
+
+Este trabajo propone una solución sencilla de un ambiente autocontenido para prototipado de modelos de Machine Learning en lenguaje Python basada en microservicios con docker-compose.  El foco está en poder ejercitar el proceso completo desde el desarrollo de modelos hasta su puesta en producción con fines didácticos, de prueba de concepto o académicos. Por lo tanto, hay muchos aspectos que están simplificados y no se pone atención a gestión de usuarios y permisos, performance, redundancia, disponibilidad, escalabilidad, etc. y no es apto para producción.
+
+### Diagrama de componentes de alto nivel
+
+
+
 ![concept](doc/assets/concept.png)
 
-Organización del proyecto:
+Organización de directorios:
 
 ~~~
 ./	
@@ -36,7 +44,9 @@ Organización del proyecto:
 	README.md 				Este archivo.
 ~~~
 
-Los servicios incluídos son:
+
+
+### Microservicios
 
 - Jupyter(/lab) como ambiente de desarrollo y evaluación de modelos.
 - ElasticSearch como base de datos orientada a eventos/documentos.
@@ -89,7 +99,7 @@ sudo firewall-cmd --reload
 La primera vez que se ejecuta el compose, se descargarán las imágenes e instanciarán los containers. Las bases de datos estarán vacías.  Se deben seguir estos pasos para cargar las bases de datos y poner un modelo de ejemplo en producción.
 
 1. Conectarse a Jupyter.
-2. Abrir y ejecutar los siguientes notebooks en orden, siguiendo las instrucciones:
+2. Abrir y ejecutar los siguientes notebooks en orden, siguiendo las instrucciones de cada uno:
    - [01 - Setup.ipynb](http://localhost:10000/notebooks/01 - Setup.ipynb)
    - [02 - Model Development.ipynb](http://localhost:10000/notebooks/02 - Model Development.ipynb)
    - [03 - API Usage Example.ipynb](http://localhost:10000/notebooks/03 - API Usage Example.ipynb)

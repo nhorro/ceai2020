@@ -121,21 +121,45 @@ Comentarios finales:
       - learning_rate
 - Arquitecturas Cloud
 
-### Clase 5. 
+### Clase 5. Jueves 26/11/20.  Arquitecturas Cloud
 
 ### Keypoints
 
+- Azure, ver doc.
 
-
-### Clase 6. 
-
-### Keypoints
-
-### Clase 7. 
+### Clase 6. Martes 15/12/20. Series Temporales 1
 
 ### Keypoints
 
+- Overview
+  - Métodos de suavizado
+  - Descomposición temporal
+  - Métodos de predicción
+- Mención Cassandra
+- Métodos de Suavizado
+  - Medias móviles
+    - Media móvil centrada
+    - Media móvil asimétricas
+  - Alisado exponencial simple
+  - Método de Holt Winters
+- Descomposición de Series Temporales
+  - Adición, producto o combinación de ambos de:
+    - Componente de tendencia
+    - Componente estacionaria
+    - Componente autoregresiva
+  - Método STL
+    - para estimar las componentes Tt y St
+    - 
 
+### Clase 7. Jueves 17/12/20. Series Temporales 2
+
+### Keypoints
+
+- Métodos de predicción
+  - Métodos paramétricos: modelos ARIMA
+  - Procesos estocásticos
+
+### Keypoints
 
 ### Clase 8. 
 

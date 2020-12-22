@@ -200,3 +200,26 @@
   - LSTM
   - Seq2Seq Encoder/decoder. Aplic. Traducciones, chatbot.
 
+## Clase 6. Sábado 11/12/2020
+
+### Key points
+
+- Ejercicio Integrador -> Notebook (colab: https://colab.research.google.com/drive/1o91Ewz61hLrmOk8luLOIHtcJ7fOIXW3A?usp=sharing)
+
+## Clase 7. Viernes 18/12/2020
+
+### Key points
+
+- Embeddings Contextuales: idea usar la hidden layer de la capa anterior.
+- Implementaciones:
+  - ELMo: Deep Contextual Word Embeddings (2017)
+- Transformers
+  - Paper: All you need is attention (2017)
+  - Encoder/Decoder
+  - BERT
+
+## Clase 8. Sábado 19/12/2020
+
+### Key points
+
+- Ejercicio Integrador Final
