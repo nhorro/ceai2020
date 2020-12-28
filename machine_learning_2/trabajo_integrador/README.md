@@ -3,6 +3,7 @@
 Este trabajo es la continuación del [Trabajo Final Integrador de Machine Learning 1](https://github.com/nhorro/ceai2020/tree/master/machine_learning_1/trabajo_integrador) e incorpora lo siguiente:
 
 - **Arquitectura de microservicios**: 
+  - Se eliminan ElasticSearch, Kibana y Portainer y el servicio con Flask.
   - Se agrega una cadena de procesamiento de detección de anomalías en tiempo real utilizando:
     - Un servicio que publica datos periódicamente. Por no disponer de datos reales, en este caso es un "mock" que publica muestras del test set elegidas aleatoriamente (actualizando la fecha de cada nueva muestra generada a la hora actual).
     - El servicio Kapacitor como sistema de monitoreo y alerta en tiempo real configurado para comunicarse con UDF (User Defined Functions) por medio de sockets.
@@ -49,10 +50,8 @@ Organización de directorios:
 ### Microservicios
 
 - Jupyter(/lab) como ambiente de desarrollo y evaluación de modelos.
-- ElasticSearch como base de datos orientada a eventos/documentos.
-- Grafana y Kibana como interfaces para administración y monitoreo.
-- Una plantilla en Flask para servicio de modelos con API REST.
-- Portainer para administración de containers.
+- Grafana como interfaces para visualización en tiempo real.
+- TODO: faltantes
 
 ## Instrucciones
 
@@ -74,11 +73,8 @@ Los servicios COTS están configurados por defecto siguiendo las guías provista
 
 | Servicio      | Parámetros                                                   | Observaciones                                                |
 | ------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Elasticsearch | Puertos: 9200/9300                                           | Ver: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html |
 | Jupyterlab    | URL: http://localhost:10000<br/>                             | Basada en jupyter/scipy-notebook. Ver: https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-scipy-notebook |
 | Grafana       | URL: http://localhost:3000/<br/>User: admin<br/>Password: admin | Ver: https://grafana.com/docs/grafana/latest/installation/docker/ |
-| Kibana        | URL: http://localhost:5601/                                  | Ver: https://www.elastic.co/guide/en/kibana/current/docker.html |
-| API con Flask | Configuración para desarrollo.<br />URL: http://localhost:5000/ | Ver contenido de directorio ./compose/api.                   |
 
 Si se accede desde otro host, recordar configurar el firewall. Por ejemplo, en Ubuntu:
 
@@ -87,11 +83,6 @@ Si se accede desde otro host, recordar configurar el firewall. Por ejemplo, en U
 sudo firewall-cmd --add-port=10000/tcp --permanent
 # Grafana
 sudo firewall-cmd --add-port=3000/tcp --permanent
-# Kibana
-sudo firewall-cmd --add-port=5601/tcp --permanent
-# API c/ Flask
-sudo firewall-cmd --add-port=5000/tcp --permanent
-sudo firewall-cmd --reload
 ```
 
 #### Setup inicial / guía de uso
@@ -100,9 +91,12 @@ La primera vez que se ejecuta el compose, se descargarán las imágenes e instan
 
 1. Conectarse a Jupyter.
 2. Abrir y ejecutar los siguientes notebooks en orden, siguiendo las instrucciones de cada uno:
-   - [01 - Setup.ipynb](http://localhost:10000/notebooks/01 - Setup.ipynb)
-   - [02 - Model Development.ipynb](http://localhost:10000/notebooks/02 - Model Development.ipynb)
-   - [03 - API Usage Example.ipynb](http://localhost:10000/notebooks/03 - API Usage Example.ipynb)
+  - 01. Descripción del Objetivo. Análisis Exploratorio Inicial, Ingeniería de Features.
+  - 02. Preparación de dataset. SMOTE.
+  - 03. Desarrollo y entrenamiento de modelos I. Optimización de HPs con Hyperopt y Optuna.
+  - 04. Desarrollo y entrenamiento de modelos II. Ensambles.
+  - 05. Despliegue de Solución para detección de Anomalías en Tiempo Real con microsevicios: InfluxDB, Kapacitor y Grafana.
+En caso de que se cuente con la capacidad de iniciar el entorno, también se pueden ver las exportaciones de la ejecución en PDF.
 3. Una vez cargados los datos, es posible inspeccionarlos en Grafana y Kibana, además de hacer predicciones consumiendo la API REST.
 
 ![](doc/assets/grafana-ss.png)

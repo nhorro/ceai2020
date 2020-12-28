@@ -1,6 +1,7 @@
 __pycache__
 .pytest_cache
 .idea
+.secret
 .ipynb_checkpoints
 draft_notebooks
 intro_ai/clase_2/dataset.pkl
