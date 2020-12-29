@@ -1,1 +1,1 @@
-{"C": 0.0007069886617360261, "kernel": "linear", "gamma": "scale"}
+{"C": 17.48365748417831, "kernel": "rbf", "gamma": "scale"}
