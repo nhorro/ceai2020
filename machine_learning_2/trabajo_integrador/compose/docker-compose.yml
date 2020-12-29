@@ -104,7 +104,23 @@ services:
     ports:
       - "8888:8888/tcp"   
     networks:
-        - mynetwork      
+        - mynetwork     
+
+  creditfraudmodel:
+    build:
+      context: ./api
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ../models
+        target: /models        
+    environment:
+        PRODUCTION_MODEL_FILENAME: "production.pkl"
+    networks:
+      - mynetwork           
 
 networks:
   mynetwork:

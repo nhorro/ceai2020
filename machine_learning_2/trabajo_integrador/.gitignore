@@ -1,2 +1,4 @@
 data/credit_fraud/creditcard.tar.xz
+data/credit_fraud/*.csv
 notebooks/wip
+notebooks/test-kapacitor-udf

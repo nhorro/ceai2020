@@ -1,0 +1,1 @@
+{"boosting": "gbtree", "tree_method": "hist", "max_depth": 20, "reg_alpha": 1, "reg_lambda": 0, "min_child_weight": 3, "gamma": 1, "learning_rate": 0.019173436345728545, "eval_metric": "rmse", "objective": "reg:tweedie", "colsample_bytree": 0.27, "colsample_bynode": 0.91, "colsample_bylevel": 0.91, "subsample": 0.6}

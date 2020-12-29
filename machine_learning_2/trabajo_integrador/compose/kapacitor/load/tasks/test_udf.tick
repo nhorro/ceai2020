@@ -1,9 +1,0 @@
-dbrp "my_application"."autogen"
-
-stream
-    |from()
-        .measurement('TMV_VAR0')
-    @udf_ml_model()
-    |influxDBOut()
-        .database('my_application')
-        .measurement('TMV_VAR_PREDICTED')
