@@ -223,3 +223,5 @@
 ### Key points
 
 - Ejercicio Integrador Final
+
+- [Notebook en Colab](https://colab.research.google.com/drive/1o91Ewz61hLrmOk8luLOIHtcJ7fOIXW3A?usp=sharing)
