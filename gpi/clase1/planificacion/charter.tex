@@ -6,7 +6,7 @@
 % Nombre del posgrado, se usa en la carátula y se puede usar el cualquier lugar del documento con el comando \degreename
 %\posgrado{Carrera de Especialización en Sistemas Embebidos} 
 %\posgrado{Carrera de Especialización en Inteligencia  de las Cosas} 
-\posgrado{Carrera de Especialización en Intelegencia Artificial}
+\posgrado{Carrera de Especialización en Inteligencia Artificial}
 %\posgrado{Maestría en Sistemas Embebidos} 
 %\posgrado{Maestría en Internet de las cosas}
 
@@ -14,14 +14,14 @@
 \autor{Lic. Nicolás Eduardo Horro} 
 
 % El nombre del director y co-director, se puede usar el cualquier lugar del documento con el comando \supname y \cosupname y \pertesupname y \pertecosupname
-\director{Dr. Félix Rojo}
+\director{Dr. Félix Ramón Rojo}
 \pertenenciaDirector{INVAP S.E.} 
 % FIXME:NO IMPLEMENTADO EL CODIRECTOR ni su pertenencia
 %\codirector{} % si queda vacio no se deberíá incluir 
 %\pertenenciaCoDirector{}
 
 % Nombre del cliente, quien va a aprobar los resultados del proyecto, se puede usar con el comando \clientename y \empclientename
-\cliente{Nombre del cliente}
+\cliente{Dr. Jorge Omar Lugo}
 \empresaCliente{INVAP S.E.}
 
 % Nombre y pertenencia de los jurados, se pueden usar el cualquier lugar del documento con el comando \jurunoname, \jurdosname y \jurtresname y \perteunoname, \pertedosname y \pertetresname.
@@ -33,8 +33,8 @@
 \pertenenciaJurTres{pertenencia (3)}
  
 \fechaINICIO{05 de agosto de 2021}		%Fecha de inicio de la cursada de GdP \fechaInicioName
-\fechaFINALPlanificacion{13 de octubre de 2021} 	%Fecha de final de cursada de GdP
-\fechaFINALTrabajo{22 de agosto de 2021}		%Fecha de defensa pública del trabajo final
+\fechaFINALPlanificacion{13 de marzo de 2021} 	%Fecha de final de cursada de GdP
+\fechaFINALTrabajo{23 de abril de 2021}		%Fecha de defensa pública del trabajo final
 
 
 \begin{document}
@@ -84,7 +84,7 @@ San Carlos de Bariloche, \fechaInicioName
 
 \vspace{2cm}
 
-Por medio de la presente se acuerda con el Lic. \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'', consistirá esencialmente en el prototipo preliminar de un sistema de control de temperatura de un calefón, y tendrá un presupuesto preliminar estimado de 600 hs de trabajo y \textcolor{red}{\$XXX}, con fecha de inicio \fechaInicioName\hspace{1px} y fecha de presentación pública \fechaFinalName.
+Por medio de la presente se acuerda con el Lic. \authorname\hspace{1px} que su Trabajo Final de la \degreename\hspace{1px} se titulará ``\ttitle'', consistirá esencialmente en el prototipo preliminar de un sistema para clasificación de capturas y descarte en buques pesqueros utilizando técnicas visión por computadora e inteligencia artificial, y tendrá un presupuesto preliminar estimado de 600 hs de trabajo, con fecha de inicio \fechaInicioName\hspace{1px} y fecha de presentación pública \fechaFinalName.
 
 Se adjunta a esta acta la planificación inicial.
 
@@ -138,6 +138,57 @@ La descripción técnica-conceptual \textbf{debe incluir al menos un diagrama en
 El tamaño de la tipografía en la figura debe ser adecuado para que NO pase lo que ocurre acá, donde el lector debe esforzarse para poder leer el texto. Los colores usados en el diagrama deben ser adecuados, tal que ayuden a comprender mejor el diagrama.
 \end{consigna}
 
+% Recordar borrar consigna!
+El presente proyecto consiste en un prototipo que extiende el Sistema de Monitoreo Electrónico (SME) en los sistemas de Circuitos Cerrados de Televisión (CCTV) a bordo de los buques pesqueros mediante el uso Inteligencia Artificial (IA). El objetivo es la clasificación y estimación de cantidad de las piezas capturadas y descartadas, proceso que actualmente se realiza de manera manual y resulta costoso y propenso a errores. 
+
+\subsection{Introducción general al tema}
+
+La pesca industrial es un tipo de pesca que tiene como objetivo obtener un gran número de capturas. En Argentina el sector primario pesquero (aquél que se ocupa de la captura) se compone de una flota de buques fresqueros de altura, de costeros grandes y costeros chicos y una Flota de buques procesadores. La Flota Fresquera de Altura está conformada por barcos arrastreros con bodegas refrigeradas y cuentan con equipamiento de navegación y detección y utilizan redes de arrastre.
+
+A fin de garantizar que la pesca a esta escala sea sostenible, el Consejo Federal Pesquero tiene como funciones el establecimiento de la política pesquera y de la política de investigación pesquera nacional, la planificación del desarrollo pesquero nacional, el establecimiento de la Captura Máxima Permisible por especie y las cuotas de captura, así como aprobar los permisos de pesca comercial y experimental y fijar los cánones por el ejercicio de la pesca, entre otros. 
+Dado que una pesquería es un sistema complejo de factores interdependientes entre los que se cuentan el estado del recurso biológico, limitaciones sociales e institucionales, condiciones económicas y convicciones culturales, etc- es importante generar información estadística e indicadores que permitan el análisis de la actividad de las pesquerías para poder establecer de manera precisa su marco regulatorio.
+El monitoreo y la vigilancia deben permitir conocer las características del esfuerzo en la actividad pesquera y asegurar que las capturan se realicen dentro de los cánones admitidos. Existen también regulaciones que establecen el modo en que debe emplearse la técnica, por ejemplo, exigiendo una permanencia mínima de las redes en el fondo para disminuir la captura incidental de mamíferos marinos.
+Tradicionalmente, la principal manera de recopilar información independiente acerca de las actividades y la captura de los buques ha sido mediante observadores a bordo, pero existe una creciente tendencia a la utilización de sistemas electrónicos y un mayor grado de automatización.
+El Seguimiento Electrónico (EM) se presenta como una alternativa eficiente y rentable.
+Si bien el registro y monitoreo digital de las actividades a bordo representa un avance respecto a la elaboración de reportes manuscritos, el análisis de la cantidad datos generados, la manipulación de sus medios de almacenamiento y la dependencia de observadores calificados para su análisis, no deja de ser una alternativa costosa y también propensa a otro tipo de errores.
+Las nuevas técnicas en las áreas de Visión por Computadora e Inteligencia Artificial hallan un posible campo de aplicación en la optimización de estas tareas de análisis, como lo demuestran algunos trabajos con resultados alentadores. Por otra parte, el conocido sitio de competencias de aprendizaje automático Kaggle realizó una competencia de clasificación de capturas en buques pesqueros también con el tema de  combatir la sobreexplotación del recurso.
+
+\subsection{Marco de la propuesta}
+
+INVAP S.E. es una empresa del Gobierno de Río Negro dedicada al diseño y construcción de sistemas tecnológicos complejos, con una trayectoria de cuatro décadas en el mercado nacional y tres en la escena internacional. La empresa define como su misión el desarrollo de tecnología de avanzada en diferentes campos de la industria, la ciencia y la investigación aplicada, creando “paquetes tecnológicos” de alto valor agregado tanto para satisfacer necesidades nacionales como para insertarse en mercados externos a través de la exportación.
+Dentro del contexto de la búsqueda de nuevos negocios e incorporación de nuevas tecnologías, se realizan trabajos de investigación y prototipos, a menudo mediante convenios con Universidades y otras Organizaciones, ya sea en calidad de pasantías, prácticas profesionales, trabajos de carreras de Grado y Posgrado, u otros. Estos trabajos pueden eventualmente evolucionar y aprovecharse en un proyecto de mayor envergadura.
+Este proyecto consiste en, a partir de las tareas de relevamiento realizadas en la empresa (algunas en el contexto de pasantías), implementar un prototipo que automatice la clasificación y estimación de cantidad de presas de especies del Mar Atlántico Argentino en buques pesqueros a partir de las filmaciones de sistemas CCTV a bordo, y con la posibilidad de complementar esta información con la de otros componentes del SME en caso de estar disponibles, como GPS, sistema mecánico de las redes de arrastre, etc.
+
+\subsection{Descripción del proyecto}
+
+La distorsión de lente de pez que suelen tener las cámaras de vigilancia, las condiciones de iluminación variables (zonas de escaso contraste por la fuerte saturación de luces fluorescentes y otras casi sin iluminar) y la dificultad para detectar una estructura por la forma y disposición de las presas hacen que resulte difícil garantizar una correcta detección por un método automático.
+
+Aún así, la literatura consultada y las soluciones con mejor desempeño presentadas en muestran que se pueden obtener resultados aceptables utilizando alguna variante de red convolucional (CNN, por sus siglas en inglés Convolutional Neural Network). 
+Una característica de las redes neuronales profundas es que requieren una gran cantidad de datos de entrenamiento, que en este caso (a diferencia de como ocurre en otros dominios, como el reconocimiento de personas, caras, vehículos, carteles, etc.) es difícil (o costoso) obtener.
+
+Se propone una solución integrada por los siguientes bloques:
+
+Ingesta de Video: obtiene la los cuadros de una cámara o un archivo de video y aplica una corrección de imagen para reducir las diferencias entre cámaras. Esta corrección puede incluir: contrarrestar distorsión de lente de pez, aplicar transformaciones de coordenadas cromáticas, ecualizar la imagen, etc. Se considerará el uso de OpenCV/Video4Linux o frameworks de más alto nivel como [22,23].
+
+Detección: este bloque recibe los cuadros de video procesados de la etapa anterior y por cada cuadro extrae las regiones de interés y la probabilidad de que exista alguna de las clases detectadas. Se propone utilizar el algoritmo YOLOv4 [17] o variantes del mismo, dedo que representa el estado del arte y es apto para procesamiento en tiempo real si se dispone del HW apropiado. A menudo la capacidad de detección de un objeto puede depender de su orientación, condiciones de oclusión, iluminación, etc. Es posible que un objeto que no sea fácilmente identificable en un cuadro de video, sí lo sea en otros cuadros de ese mismo video. Este problema y una posible solución se describe en [18]. Para este trabajo se propone usar un algoritmo de seguimiento que también representa el estado del arte, denominado DeepSORT [19]. La salida de este algoritmo es una trayectoria de un objeto. Como etapa final, se propone un filtro para decidir si rechazar o no la detección, en función de la consistencia de las detecciones de que el objeto se corresponde con la misma clase. Una opción de implementación sencilla es Naive Bayes, pero se considerarán otras.
+
+Información de contexto (opcional): se puede utilizar información de localización del buque, fecha y hora, actividad de sistemas mecánicos y otros datos tanto para acompañar la salida del clasificador como para mejorarla, dado que hay especies que habitan determinados sectores o se capturan a determinada profundidad [33,35] e intervienen sistemas de captura específicos para un tipo de objetivo [34,35].
+
+Registro y Generación de Reportes: la salida de la etapa anterior es registrada en una base de datos, para obtener trazabilidad de las capturas y descartes (horarios, tipos de capturas, cantidad de descartes, etc.). Para facilitar el consumo de esta información y permitir combinarla con otros servicios, se propone como interfaz un servicio REST sencillo que devuelve reportes para consultas típicas. Para la base de datos también se considerarán alternativas aptas para una implementación en un sistema embebido, por ejemplo [20,21]. Otra opción es utilizar InfluxDB [36] que ya incluye una interfaz de consulta y control REST, en cuyo caso se podría prescindir del servicio adicional.
+
+La figura  \ref{fig:diagBloques} muestra un diagrama de bloques de la solución propuesta.
+
+\vspace{25px}
+
+\begin{figure}[htpb]
+\centering 
+\includegraphics[width=.9\textwidth]{./Figuras/diagrama_bloques.png}
+\caption{Diagrama en bloques del sistema}
+\label{fig:diagBloques}
+\end{figure}
+
+\vspace{25px}
+
 
 \section{Identificación y análisis de los interesados}
 \label{sec:interesados}
@@ -163,11 +214,11 @@ Pero en cambio sí es usual que el Cliente y el Auspiciante sean el mismo, por e
 \hline
 \rowcolor[HTML]{C0C0C0} 
 Rol           & Nombre y Apellido & Organización 	& Puesto 	\\ \hline
-Auspiciante   &                   &              	&        	\\ \hline
-Cliente       & \clientename      &\empclientename	&        	\\ \hline
-Impulsor      &                   &              	&        	\\ \hline
+Auspiciante   & -                 & -             	& -       	\\ \hline
+Cliente       & \clientename      &\empclientename	& -       	\\ \hline
+Impulsor      & -                 & -             	& -       	\\ \hline
 Responsable   & \authorname       & FIUBA        	& Alumno 	\\ \hline
-Colaboradores &                   &              	&        	\\ \hline
+Colaboradores & -                 & -             	& -       	\\ \hline
 Orientador    & \supname	      & \pertesupname 	& Director	Trabajo final \\ \hline
 Equipo        & miembro1 \newline 
 				miembro2          &              	&        	\\ \hline
