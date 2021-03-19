@@ -73,8 +73,6 @@ Revisión & \multicolumn{1}{c|}{\cellcolor[HTML]{C0C0C0}Detalles de los cambios 
 
 \pagebreak
 
-
-
 \section{Acta de constitución del proyecto}
 \label{sec:acta}
 
@@ -100,9 +98,6 @@ Se adjunta a esta acta la planificación inicial.
 %\multicolumn{3}{c}{\begin{tabular}[c]{@{}c@{}} \jurtresname\\ Jurado del Trabajo Final\end{tabular}} \vspace{.5cm}                                                                     
 \end{tabular}
 \end{table}
-
-
-
 
 \section{Descripción técnica-conceptual del proyecto a realizar}
 \label{sec:descripcion}
@@ -143,48 +138,93 @@ El presente proyecto consiste en un prototipo que extiende el Sistema de Monitor
 
 \subsection{Introducción general al tema}
 
-La pesca industrial es un tipo de pesca que tiene como objetivo obtener un gran número de capturas. En Argentina el sector primario pesquero (aquél que se ocupa de la captura) se compone de una flota de buques fresqueros de altura, de costeros grandes y costeros chicos y una Flota de buques procesadores. La Flota Fresquera de Altura está conformada por barcos arrastreros con bodegas refrigeradas y cuentan con equipamiento de navegación y detección y utilizan redes de arrastre.
+La pesca industrial es un tipo de pesca que tiene como objetivo obtener un gran número de capturas. En Argentina el sector primario pesquero (aquél que se ocupa de la captura) se compone de una flota de buques fresqueros de altura, de costeros grandes y costeros chicos y una flota de buques procesadores. La flota fresquera de altura está conformada por barcos arrastreros con bodegas refrigeradas y cuentan con equipamiento de navegación y detección y utilizan redes de arrastre.
 
-A fin de garantizar que la pesca a esta escala sea sostenible, el Consejo Federal Pesquero tiene como funciones el establecimiento de la política pesquera y de la política de investigación pesquera nacional, la planificación del desarrollo pesquero nacional, el establecimiento de la Captura Máxima Permisible por especie y las cuotas de captura, así como aprobar los permisos de pesca comercial y experimental y fijar los cánones por el ejercicio de la pesca, entre otros. 
-Dado que una pesquería es un sistema complejo de factores interdependientes entre los que se cuentan el estado del recurso biológico, limitaciones sociales e institucionales, condiciones económicas y convicciones culturales, etc- es importante generar información estadística e indicadores que permitan el análisis de la actividad de las pesquerías para poder establecer de manera precisa su marco regulatorio.
-El monitoreo y la vigilancia deben permitir conocer las características del esfuerzo en la actividad pesquera y asegurar que las capturan se realicen dentro de los cánones admitidos. Existen también regulaciones que establecen el modo en que debe emplearse la técnica, por ejemplo, exigiendo una permanencia mínima de las redes en el fondo para disminuir la captura incidental de mamíferos marinos.
-Tradicionalmente, la principal manera de recopilar información independiente acerca de las actividades y la captura de los buques ha sido mediante observadores a bordo, pero existe una creciente tendencia a la utilización de sistemas electrónicos y un mayor grado de automatización.
-El Seguimiento Electrónico (EM) se presenta como una alternativa eficiente y rentable.
-Si bien el registro y monitoreo digital de las actividades a bordo representa un avance respecto a la elaboración de reportes manuscritos, el análisis de la cantidad datos generados, la manipulación de sus medios de almacenamiento y la dependencia de observadores calificados para su análisis, no deja de ser una alternativa costosa y también propensa a otro tipo de errores.
-Las nuevas técnicas en las áreas de Visión por Computadora e Inteligencia Artificial hallan un posible campo de aplicación en la optimización de estas tareas de análisis, como lo demuestran algunos trabajos con resultados alentadores. Por otra parte, el conocido sitio de competencias de aprendizaje automático Kaggle realizó una competencia de clasificación de capturas en buques pesqueros también con el tema de  combatir la sobreexplotación del recurso.
-
-\subsection{Marco de la propuesta}
-
-INVAP S.E. es una empresa del Gobierno de Río Negro dedicada al diseño y construcción de sistemas tecnológicos complejos, con una trayectoria de cuatro décadas en el mercado nacional y tres en la escena internacional. La empresa define como su misión el desarrollo de tecnología de avanzada en diferentes campos de la industria, la ciencia y la investigación aplicada, creando “paquetes tecnológicos” de alto valor agregado tanto para satisfacer necesidades nacionales como para insertarse en mercados externos a través de la exportación.
-Dentro del contexto de la búsqueda de nuevos negocios e incorporación de nuevas tecnologías, se realizan trabajos de investigación y prototipos, a menudo mediante convenios con Universidades y otras Organizaciones, ya sea en calidad de pasantías, prácticas profesionales, trabajos de carreras de Grado y Posgrado, u otros. Estos trabajos pueden eventualmente evolucionar y aprovecharse en un proyecto de mayor envergadura.
-Este proyecto consiste en, a partir de las tareas de relevamiento realizadas en la empresa (algunas en el contexto de pasantías), implementar un prototipo que automatice la clasificación y estimación de cantidad de presas de especies del Mar Atlántico Argentino en buques pesqueros a partir de las filmaciones de sistemas CCTV a bordo, y con la posibilidad de complementar esta información con la de otros componentes del SME en caso de estar disponibles, como GPS, sistema mecánico de las redes de arrastre, etc.
-
-\subsection{Descripción del proyecto}
-
-La distorsión de lente de pez que suelen tener las cámaras de vigilancia, las condiciones de iluminación variables (zonas de escaso contraste por la fuerte saturación de luces fluorescentes y otras casi sin iluminar) y la dificultad para detectar una estructura por la forma y disposición de las presas hacen que resulte difícil garantizar una correcta detección por un método automático.
-
-Aún así, la literatura consultada y las soluciones con mejor desempeño presentadas en muestran que se pueden obtener resultados aceptables utilizando alguna variante de red convolucional (CNN, por sus siglas en inglés Convolutional Neural Network). 
-Una característica de las redes neuronales profundas es que requieren una gran cantidad de datos de entrenamiento, que en este caso (a diferencia de como ocurre en otros dominios, como el reconocimiento de personas, caras, vehículos, carteles, etc.) es difícil (o costoso) obtener.
-
-Se propone una solución integrada por los siguientes bloques:
-
-Ingesta de Video: obtiene la los cuadros de una cámara o un archivo de video y aplica una corrección de imagen para reducir las diferencias entre cámaras. Esta corrección puede incluir: contrarrestar distorsión de lente de pez, aplicar transformaciones de coordenadas cromáticas, ecualizar la imagen, etc. Se considerará el uso de OpenCV/Video4Linux o frameworks de más alto nivel como [22,23].
-
-Detección: este bloque recibe los cuadros de video procesados de la etapa anterior y por cada cuadro extrae las regiones de interés y la probabilidad de que exista alguna de las clases detectadas. Se propone utilizar el algoritmo YOLOv4 [17] o variantes del mismo, dedo que representa el estado del arte y es apto para procesamiento en tiempo real si se dispone del HW apropiado. A menudo la capacidad de detección de un objeto puede depender de su orientación, condiciones de oclusión, iluminación, etc. Es posible que un objeto que no sea fácilmente identificable en un cuadro de video, sí lo sea en otros cuadros de ese mismo video. Este problema y una posible solución se describe en [18]. Para este trabajo se propone usar un algoritmo de seguimiento que también representa el estado del arte, denominado DeepSORT [19]. La salida de este algoritmo es una trayectoria de un objeto. Como etapa final, se propone un filtro para decidir si rechazar o no la detección, en función de la consistencia de las detecciones de que el objeto se corresponde con la misma clase. Una opción de implementación sencilla es Naive Bayes, pero se considerarán otras.
-
-Información de contexto (opcional): se puede utilizar información de localización del buque, fecha y hora, actividad de sistemas mecánicos y otros datos tanto para acompañar la salida del clasificador como para mejorarla, dado que hay especies que habitan determinados sectores o se capturan a determinada profundidad [33,35] e intervienen sistemas de captura específicos para un tipo de objetivo [34,35].
-
-Registro y Generación de Reportes: la salida de la etapa anterior es registrada en una base de datos, para obtener trazabilidad de las capturas y descartes (horarios, tipos de capturas, cantidad de descartes, etc.). Para facilitar el consumo de esta información y permitir combinarla con otros servicios, se propone como interfaz un servicio REST sencillo que devuelve reportes para consultas típicas. Para la base de datos también se considerarán alternativas aptas para una implementación en un sistema embebido, por ejemplo [20,21]. Otra opción es utilizar InfluxDB [36] que ya incluye una interfaz de consulta y control REST, en cuyo caso se podría prescindir del servicio adicional.
-
-La figura  \ref{fig:diagBloques} muestra un diagrama de bloques de la solución propuesta.
+La figura \ref{fig:tipo_embarcaciones} expone un diagrama simplificado de los tipos de embarcaciones y métodos de captura de acuerdo a la profundidad.
 
 \vspace{25px}
 
 \begin{figure}[htpb]
 \centering 
-\includegraphics[width=.9\textwidth]{./Figuras/diagrama_bloques.png}
+\includegraphics[width=.7\textwidth]{./Figuras/tipo_embarcaciones.png}
+\caption{Tipos de embarcaciones según el tipo de pesca}
+\label{fig:tipo_embarcaciones}
+\end{figure}
+
+\vspace{25px}
+
+A fin de garantizar que la pesca a esta escala sea sostenible, el Consejo Federal Pesquero tiene como funciones el establecimiento de la política pesquera y de la política de investigación pesquera nacional, la planificación del desarrollo pesquero nacional, el establecimiento de la Captura Máxima Permisible (CMP) por especie y las cuotas de captura, así como aprobar los permisos de pesca comercial y experimental y fijar los cánones por el ejercicio de la pesca, entre otros. 
+Dado que una pesquería es un sistema complejo de factores interdependientes entre los que se cuentan el estado del recurso biológico, limitaciones sociales e institucionales, condiciones económicas y convicciones culturales, etc- es importante generar información estadística e indicadores que permitan el análisis de la actividad de las pesquerías para poder establecer de manera precisa su marco regulatorio.
+El monitoreo y la vigilancia deben permitir conocer las características del esfuerzo en la actividad pesquera y asegurar que las capturan se realicen dentro de los cánones admitidos. Existen también regulaciones que establecen el modo en que debe emplearse la técnica, por ejemplo, exigiendo una permanencia mínima de las redes en el fondo para disminuir la captura incidental de mamíferos marinos.
+Tradicionalmente, la principal manera de recopilar información independiente acerca de las actividades y la captura de los buques ha sido mediante observadores a bordo, pero existe una creciente tendencia a la utilización de sistemas electrónicos y un mayor grado de automatización.
+El Seguimiento Electrónico (EM) se presenta como una alternativa eficiente y rentable.
+Si bien el registro y monitoreo digital de las actividades a bordo representa un avance respecto a la elaboración de reportes manuscritos, el análisis de la cantidad datos generados, la manipulación de sus medios de almacenamiento y la dependencia de observadores calificados para su análisis, no deja de ser una alternativa costosa y también propensa a otro tipo de errores.
+
+La figura \ref{fig:seguimiento_electronico} muestra un esquema de un sistema de seguimiento electrónico típico y algunos ejemplos de sus usos.
+
+\vspace{25px}
+
+\begin{figure}[htpb]
+\centering 
+\includegraphics[width=.7\textwidth]{./Figuras/seguimiento_electronico.png}
+\caption{ a) Sistema de Seguimiento Electrónico. b) Sistema de CCTV apuntando a redes de arrastre. c) Registro de especímenes por observadores calificados. d) Cámara captando descarte de especie protegida, probablemente no declarada.}
+\label{fig:seguimiento_electronico}
+\end{figure}
+
+\vspace{25px}
+
+Las nuevas técnicas en las áreas de Visión por Computadora e Inteligencia Artificial hallan un posible campo de aplicación en la optimización de estas tareas de análisis, como lo demuestran algunos trabajos con resultados alentadores. Por otra parte, el conocido sitio de competencias de aprendizaje automático Kaggle realizó una competencia de clasificación de capturas en buques pesqueros también con el tema de  combatir la sobreexplotación del recurso.
+
+\subsection{Marco de la propuesta}
+
+INVAP S.E. es una empresa del Gobierno de Río Negro dedicada al diseño y construcción de sistemas tecnológicos complejos, con una trayectoria de cuatro décadas en el mercado nacional y tres en la escena internacional. La empresa define como su misión el desarrollo de tecnología de avanzada en diferentes campos de la industria, la ciencia y la investigación aplicada, creando “paquetes tecnológicos” de alto valor agregado tanto para satisfacer necesidades nacionales como para insertarse en mercados externos a través de la exportación.
+Dentro del contexto de la búsqueda de nuevos negocios e incorporación de nuevas tecnologías, se realizan trabajos de investigación y prototipos, a menudo mediante convenios con universidades y otras organizaciones, ya sea en calidad de pasantías, prácticas profesionales, trabajos de carreras de grado y posgrado, u otros. Estos trabajos pueden eventualmente evolucionar y aprovecharse en un proyecto de mayor envergadura.
+El proyecto que se describe es uno de estos casos y se integra en un desarrollo de mayor alcance: un sistema que utiliza cámaras de video y computadoras o dispositivos auxiliares para el control de la pesca que incorpora gradualmente mayores niveles de automatismo y capacidades de reporte en tiempo real. 
+El principal cliente interesado es el Estado Argentino, y en particular la Subsecretaría de Pesca y Acuicultura perteneciente a la Secretaría de Agricultura, Ganadería y Pesca del Ministerio de Agricultura, Ganadería y Pesca. Si bien no son clientes directos, es también importante mencionar la participación del Consejo Federal Pesquero (https://cfp.gob.ar/) y de INIDEP(https://www.argentina.gob.ar/inidep)), organismos involucrados en el seguimiento y regulación de la explotación del recurso y promotores de la modernización de los sistemas de monitoreo y seguimiento. También pueden ser potenciales usuarios centros de investigación o entes privados que lo utilicen para registro propio. El desarrollo y vinculación con instituciones se realiza por medio de INVAP S.E y para este trabajo representa la aceptación técnica por parte del cliente el Dr. Jorge Omar Lugo.
+Como se mencionó, este trabajo es un subproducto de un proyecto de mayor envergadura. El desarrollo actual de INVAP S.E. tiene como objetivos posibilitar el registro de video y de otros dispositivos (por ejemplo motores de las redes de arrastre) para su posterior análisis en tierra (dependiendo del caso puede ser hasta luego de 30 días en el mar), la segunda etapa es el procesamiento y envío del parte de pesca en tiempo real, y por último la automatización de algunas tareas de análisis. Este trabajo es un prototipo para la tercer etapa. 
+
+
+\subsection{Descripción del proyecto}
+
+La distorsión de lente de pez que suelen tener las cámaras de vigilancia, las condiciones de iluminación variables (zonas de escaso contraste por la fuerte saturación de luces fluorescentes y otras casi sin iluminar) y la dificultad para detectar una estructura por la forma y disposición de las presas hacen que resulte difícil garantizar una correcta detección por un método automático.
+
+La figura \ref{fig:ejemplos_escenas} muestra ejemplos de los tipos de escenas en las cuales se apunta a realizar la detección.
+
+\vspace{25px}
+
+\begin{figure}[htpb]
+\centering 
+\includegraphics[width=.7\textwidth]{./Figuras/ejemplos_escenas.png}
+\caption{Comparación de imágenes de cámaras en distintos buques. La orientación aleatoria de las presas y su mutua oclusión, y la difícil estructura de la escena presentan un desafío para los algoritmos de detección}
+\label{fig:ejemplos_escenas}
+\end{figure}
+
+\vspace{25px}
+
+Aún así, la literatura consultada y las soluciones con mejor desempeño presentadas en muestran que se pueden obtener resultados aceptables utilizando alguna variante de red convolucional (CNN, por sus siglas en inglés Convolutional Neural Network). 
+Una característica de las redes neuronales profundas es que requieren una gran cantidad de datos de entrenamiento, que en este caso (a diferencia de como ocurre en otros dominios, como el reconocimiento de personas, caras, vehículos, carteles, etc.) es difícil (o costoso) obtener.
+
+La innovación de esta propuesta reside en la aplicación del estado del arte de estas técnicas a un dominio para el cuál no existen productos o soluciones en el mercado.
+
+Se propone una solución integrada por los siguientes bloques:
+
+Ingesta de Video: obtiene la los cuadros de una cámara o un archivo de video y aplica una corrección de imagen para reducir las diferencias entre cámaras. Esta corrección puede incluir: contrarrestar distorsión de lente de pez, aplicar transformaciones de coordenadas cromáticas, ecualizar la imagen, etc.
+
+Detección: este bloque recibe los cuadros de video procesados de la etapa anterior y por cada cuadro extrae las regiones de interés y la probabilidad de que exista alguna de las clases detectadas. Se utilizará el algoritmo YOLOv4 o variantes del mismo, dado que representa el estado del arte y es apto para procesamiento en tiempo real si se dispone del HW apropiado. A menudo la capacidad de detección de un objeto puede depender de su orientación, condiciones de oclusión, iluminación, etc. Es posible que un objeto que no sea fácilmente identificable en un cuadro de video, sí lo sea en otros cuadros de ese mismo video. Para este trabajo se propone usar un algoritmo de seguimiento que también representa el estado del arte, denominado DeepSORT. La salida de este algoritmo es una trayectoria de un objeto. Como etapa final, se propone un filtro para decidir si rechazar o no la detección y asociar un evento a esa trayectoria (por ejemplo, incrementar un contador de capturas, reportar un descarte, etc.).
+
+Información de contexto (opcional): se puede utilizar información de localización del buque, fecha y hora, actividad de sistemas mecánicos y otros datos tanto para acompañar la salida del clasificador como para mejorarla, dado que hay especies que habitan determinados sectores o se capturan a determinada profundidade intervienen sistemas de captura específicos para un tipo de objetivo.
+
+Registro y Generación de Reportes: la salida de la etapa anterior es registrada en una base de datos, para obtener trazabilidad de las capturas y descartes (horarios, tipos de capturas, cantidad de descartes, etc.). Para facilitar el consumo de esta información y permitir combinarla con otros servicios, se propone como interfaz un servicio REST sencillo que devuelve reportes para consultas típicas. Para la base de datos también se considerarán alternativas aptas para una implementación en un sistema embebido, por ejemplo [20,21]. Otra opción es utilizar InfluxDB [36] que ya incluye una interfaz de consulta y control REST, en cuyo caso se podría prescindir del servicio adicional.
+
+La figura  \ref{fig:diagrama_bloques} muestra un diagrama de bloques de la solución propuesta.
+
+\vspace{25px}
+
+\begin{figure}[htpb]
+\centering 
+\includegraphics[width=.7\textwidth]{./Figuras/diagrama_bloques.png}
 \caption{Diagrama en bloques del sistema}
-\label{fig:diagBloques}
+\label{fig:diagrama_bloques}
 \end{figure}
 
 \vspace{25px}
@@ -214,16 +254,9 @@ Pero en cambio sí es usual que el Cliente y el Auspiciante sean el mismo, por e
 \hline
 \rowcolor[HTML]{C0C0C0} 
 Rol           & Nombre y Apellido & Organización 	& Puesto 	\\ \hline
-Auspiciante   & -                 & -             	& -       	\\ \hline
 Cliente       & \clientename      &\empclientename	& -       	\\ \hline
-Impulsor      & -                 & -             	& -       	\\ \hline
 Responsable   & \authorname       & FIUBA        	& Alumno 	\\ \hline
-Colaboradores & -                 & -             	& -       	\\ \hline
 Orientador    & \supname	      & \pertesupname 	& Director	Trabajo final \\ \hline
-Equipo        & miembro1 \newline 
-				miembro2          &              	&        	\\ \hline
-Opositores    &                   &              	&        	\\ \hline
-Usuario final &                   &              	&        	\\ \hline
 \end{tabularx}
 \end{table}
 
@@ -253,6 +286,8 @@ Por ejemplo:
 Se recomienda que sea solo un párrafo que empiece diciendo ``El propósito de este proyecto es...''.
 \end{consigna}
 
+El propósito de este proyecto es incorporar al proyecto del sistema de control de pesca que está siendo desarrollado por INVAP S.E. un componente adicional para la automatización de las tareas de registro e inspección.
+
 \section{2. Alcance del proyecto}
 \label{sec:alcance}
 
@@ -266,6 +301,8 @@ Explicitar todo lo quede comprendido dentro del alcance del proyecto.
 Explicitar además todo lo que no quede incluido (``El presente proyecto no incluye...'')
 
 \end{consigna}
+
+El presente proyecto contempla todo el software a desarrollar para el ciclo completo que se expuso en la figura \ref{fig:diagrama_bloques} desde la adquisición de una imagen (utilizando los drivers o formato de publicación de las cámaras) hasta el reporte almacenado en las bases de datos.
 
 
 \section{3. Supuestos del proyecto}
@@ -281,6 +318,14 @@ Explicitar además todo lo que no quede incluido (``El presente proyecto no incl
 
 Por ejemplo, se podrían incluir supuestos respecto a disponibilidad de tiempo y recursos humanos y materiales, sobre la factibilidad técnica de distintos aspectos del proyecto, sobre otras cuestiones que sean necesarias para el éxito del proyecto como condiciones macroeconómicas o reglamentarias.
 \end{consigna}
+
+Para el desarrollo del presente proyecto se supone que:
+
+\begin{itemize}
+\item Se contará con los datos necesarios. Se recomienda para éstos contar con un mínimo de 2000 ejemplos por cada clase de objeto a detectar. Si no pudiera alcanzarse este número, existen técnicas para compensar la falta de datos, pero puede verse penalizado el desempeño final del algoritmo y su capacidad de generalizar, siendo necesario un trabajo de ingeniería de features dependiendo de las características de las escenas en los que se utilizará.
+\item Contando con datos de cantidad y calidad suficiente, los algoritmos de la familia YOLOv4 y DeepSORT son aptos para resolver esta tarea con un desempeño igual o ligeramente superior al de un operador humano o de un mAP de 70\%.
+\item Se contará con el HW disponible para desarrollo y ejecución del proyecto.
+\end{itemize}
 
 \section{4. Requerimientos}
 \label{sec:requerimientos}
@@ -319,6 +364,40 @@ Y al escribirlos seguir las siguientes reglas:
 
 \end{consigna}
 
+begin{enumerate}
+\item Requerimientos generales
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2
+	\item Requerimiento 3 (prioridad menor)
+	\end{enumerate}
+\item Requerimientos funcionales
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2 (prioridad menor)
+	\end{enumerate}
+\item Requerimientos de desempeño	
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2 (prioridad menor)
+	\end{enumerate}
+\item Requerimientos de interface
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2 (prioridad menor)
+	\end{enumerate}	
+\item Requerimientos de ambiente
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2 (prioridad menor)
+	\end{enumerate}		
+\item Restricciones de diseño
+	\begin{enumerate}
+	\item Requerimiento 1
+	\item Requerimiento 2 (prioridad menor)
+	\end{enumerate}	
+\end{enumerate}
+
 \section{Historias de usuarios (\textit{Product backlog})}
 \label{sec:backlog}
 
@@ -329,18 +408,12 @@ Descripción: En esta sección se deben incluir las historias de usuarios y su p
 \section{5. Entregables principales del proyecto}
 \label{sec:entregables}
 
-\begin{consigna}{red}
-Cosas como: 
 \begin{itemize}
-\item Manual de uso
-\item Diagrama esquemático
+\item Documento de Diseño
+\item Manual de Usuario
 \item Código fuente
-\item Diagrama de instalación
 \item Informe final
-
 \end{itemize}
-
-\end{consigna}
 
 \section{6. Desglose del trabajo en tareas}
 \label{sec:wbs}
@@ -376,6 +449,56 @@ Cantidad total de horas: (tantas hs)
 Se recomienda que no haya ninguna tarea que lleve más de 40 hs. 
 
 \end{consigna}
+
+
+\begin{enumerate}
+\item Implementación de bloque de preprocesamiento
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\item Tarea 4 (tantas hs)
+	\item Tarea 5 (tantas hs)
+	\end{enumerate}	
+\item Implementación de bloque de detección
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\end{enumerate}
+\item Implementación de bloque de seguimiento
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\end{enumerate}
+\item Implementación de bloque de clasificación final
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\item Tarea 4 (tantas hs)
+	\item Tarea 5 (tantas hs)
+	\end{enumerate}
+\item Implementación de bloque de reporte/almacenamiento
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\item Tarea 4 (tantas hs)
+	\item Tarea 5 (tantas hs)
+	\end{enumerate}	
+\item Integración y documentación
+	\begin{enumerate}
+	\item Tarea 1 (tantas hs)
+	\item Tarea 2 (tantas hs)
+	\item Tarea 3 (tantas hs)
+	\item Tarea 4 (tantas hs)
+	\item Tarea 5 (tantas hs)
+	\end{enumerate}		
+\end{enumerate}
+
+Cantidad total de horas: 640hs.
 
 \section{7. Diagrama de Activity On Node}
 \label{sec:AoN}
