@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<project name="" company="INVAP S.E. / FIUBA" manager="" phase="" project-start="20210329T000000Z" mrproject-version="2" calendar="2">
+  <properties/>
+  <phases/>
+  <calendars>
+    <day-types>
+      <day-type id="0" name="Working" description="A default working day"/>
+      <day-type id="1" name="Nonworking" description="A default non working day"/>
+      <day-type id="2" name="Use base" description="Use day from base calendar"/>
+      <day-type id="3" name="WoorkingWeekend" description=""/>
+    </day-types>
+    <calendar id="1" name="fiuba">
+      <default-week sun="3"/>
+      <overridden-day-types>
+        <overridden-day-type id="3">
+          <interval start="0800" end="1400"/>
+        </overridden-day-type>
+        <overridden-day-type id="0">
+          <interval start="1800" end="1900"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days>
+        <day date="20210306" type="day-type" id="0"/>
+      </days>
+    </calendar>
+    <calendar id="2" name="Default">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="1800" end="2000"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
+  </calendars>
+  <tasks>
+    <task id="1" name="Lectura y relevamiento. Capacitaci&#xF3;n general" note="" work="144000" start="20210329T000000Z" end="20210423T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="2" name="Bloque de recepci&#xF3;n de video. Codificaci&#xF3;n" note="" work="144000" start="20210329T000000Z" end="20210423T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="3" name="Bloque de recepci&#xF3;n de video. Calibraci&#xF3;n y correcci&#xF3;n" note="" work="216000" start="20210423T200000Z" end="20210604T200000Z" work-start="20210426T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="2" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="4" name="Bloque de detecci&#xF3;n. Desarrollo/entrenamiento de modelos" note="" work="216000" start="20210329T000000Z" end="20210507T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="5" name="Bloque de detecci&#xF3;n. Integraci&#xF3;n con DeepSORT" note="" work="216000" start="20210329T000000Z" end="20210507T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="6" name="Bloque de detecci&#xF3;n. Filtro final" note="" work="144000" start="20210329T000000Z" end="20210423T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="7" name="Bloque de registro y reportes. Implementaci&#xF3;n" note="" work="216000" start="20210329T000000Z" end="20210507T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="8" name="Scripts de conversi&#xF3;n de formatos" note="" work="72000" start="20210329T000000Z" end="20210409T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="9" name="Scripts de transformaci&#xF3;n de datos" note="" work="72000" start="20210329T000000Z" end="20210409T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="10" name="Gesti&#xF3;n, organizaci&#xF3;n y etiquetado de dataset " note="" work="72000" start="20210329T000000Z" end="20210409T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="11" name="Preparaci&#xF3;n de dataset" note="" work="72000" start="20210329T000000Z" end="20210409T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="12" name="Scripts de procesamiento de salidas/evaluaci&#xF3;n" note="" work="108000" start="20210329T000000Z" end="20210416T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="13" name="Scripts de particionamiento de datos" note="" work="108000" start="20210329T000000Z" end="20210416T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="14" name="Integraci&#xF3;n en PC" note="" work="108000" start="20210329T000000Z" end="20210416T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="15" name="Integraci&#xF3;n edge" note="" work="108000" start="20210329T000000Z" end="20210416T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="16" name="Documentaci&#xF3;n del producto" note="" work="108000" start="20210416T200000Z" end="20210507T200000Z" work-start="20210419T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="15" type="FS"/>
+        <predecessor id="1" predecessor-id="14" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="17" name="Documentaci&#xF3;n. Memorias" note="" work="108000" start="20210329T000000Z" end="20210416T200000Z" work-start="20210329T180000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+  </tasks>
+  <resource-groups/>
+  <resources/>
+  <allocations/>
+</project>
