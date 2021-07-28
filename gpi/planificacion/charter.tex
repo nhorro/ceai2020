@@ -11,10 +11,10 @@
 %\posgrado{Maestría en Internet de las cosas}
 
 % Tu nombre, se puede usar el cualquier lugar del documento con el comando \authorname
-\autor{Nicolás Eduardo Horro} 
+\autor{Lic. Nicolás Eduardo Horro} 
 
 % El nombre del director y co-director, se puede usar el cualquier lugar del documento con el comando \supname y \cosupname y \pertesupname y \pertecosupname
-\director{Dr. Félix Ramón Rojo}
+\director{PhD. Félix Ramón Rojo}
 \pertenenciaDirector{INVAP S.E.} 
 % FIXME:NO IMPLEMENTADO EL CODIRECTOR ni su pertenencia
 %\codirector{} % si queda vacio no se deberíá incluir 
@@ -187,7 +187,7 @@ Si bien no existe una restricción en la cantidad de neuronas mínima que deba t
 existe una relación entre la cantidad de neuronas o "profundidad" de una red y su capacidad de reconocimiento de patrones en escenas complejas, es usual que las CNN utilizadas para este tipo de tareas cuenten con múltiples capas, cada una destinada a extraer patrones de un nivel de abstracción creciente.
 El inconveniente de las redes neuronales profundas es que requieren una gran cantidad de datos de entrenamiento, que en este caso (a diferencia de como ocurre en otros dominios, como el reconocimiento de personas, caras, vehículos, carteles, etc.) es difícil (o costoso) obtener.
 
-La innovación de esta propuesta reside en la aplicación del estado del arte de estas técnicas a un dominio para el cuál no existen productos o soluciones en el mercado.
+La innovación de esta propuesta reside en la aplicación del estado del arte de estas técnicas a un dominio para el cual no existen productos o soluciones en el mercado.
 
 La solución propuesta se compone de los siguientes bloques:
 
@@ -372,7 +372,7 @@ Estos resultados deben discriminar, como mínimo, fecha y hora y tipo de evento,
 	
 Historia: automatización confiable
 	
-Como {\em experto/analista} deseo contar con información de alta confiabilidad, similar a la que brindaría un experto a bordo, pero libre de sesgos por otros intereses. Es decir, la cantidad de eventos que hayan ocurrido y no hayan sido detectados y registrados debe ser muy baja, y las piezas deben estar identificadas correctamente, o indicando una confianza baja si se trata de situaciones que también puedan ser dificiles de distinguir para un operador humano.
+Como {\em experto/analista} deseo contar con información de alta confiabilidad, similar a la que brindaría un experto a bordo, pero libre de sesgos por otros intereses. Es decir, la cantidad de eventos que hayan ocurrido y no hayan sido detectados y registrados debe ser muy baja, y las piezas deben estar identificadas correctamente, o indicando una confianza baja si se trata de situaciones que también puedan ser difíciles de distinguir para un operador humano.
 \begin{itemize}
 	\item Esfuerzo: medio. Peso 3
 	\item Complejidad: alta. Peso 5
@@ -488,7 +488,7 @@ Cantidad total de horas: 620hs.
 
 En la figura \ref{fig:aon}, se muestra el diagrama de {\em Activity On Node} con los tiempos indicados en horas. Se indica el camino crítico que comienza con la implementación del bloque de recepción de video (ID01). 
 
-La capacidad de procesar video de entrada y una corrección básica de la imagen (aún cuando no se soporten todos los formatos o se haya integrado con la cámara final) permite iniciar la implementación y primeros ensayos con el detector de objetos (ID04), para el cuál se puede también avanzar con datos provisorios hasta disponer de los datos finales.
+La capacidad de procesar video de entrada y una corrección básica de la imagen (aún cuando no se soporten todos los formatos o se haya integrado con la cámara final) permite iniciar la implementación y primeros ensayos con el detector de objetos (ID04), para el cual se puede también avanzar con datos provisorios hasta disponer de los datos finales.
 
 Es suficiente contar con una implementación mínima que permita la adquisición de video y cuente con un bloque detector para comenzar a trabajar en el problema de seguimiento (ID05). Nuevamente, no es necesario disponer de los datos finales, de hecho hasta puede ser conveniente implementar el bloque de seguimiento con datos de un problema conocido, como por ejemplo el seguimiento de personas, para luego reentrenarlo con los datos del dominio de este problema.
 
@@ -522,7 +522,7 @@ Parte de esta información será modificada para incorporarse en la documentaci�
 
 En la figura \ref{fig:gantt}, se muestra el diagrama de Gantt para la propuesta de trabajo. 
 
-Por los motivos mencionados en el apartado anterior, se ha planificado la ejecución en paralelo de las tareas que pueden ejecutarse de manera concurrente y resulta dificil presuponer una secuencia con la información de que se dispone actualmente.
+Por los motivos mencionados en el apartado anterior, se ha planificado la ejecución en paralelo de las tareas que pueden ejecutarse de manera concurrente y resulta difícil presuponer una secuencia con la información de que se dispone actualmente.
 
 \begin{figure}[htpb]
 \centering 
@@ -720,14 +720,14 @@ Se identifican los siguientes riesgos para este proyecto. Se utilizará una esca
 
 Riesgo 1. Datos insuficientes: no se consiguen datos de calidad en tiempo y forma. Los datos son insuficientes para entrenar el algoritmo, requieren más trabajo manual de preparación del planificado o están disponibles muy cerca de las fechas límite.
 \begin{itemize}
-	\item Severidad (S): 10. La calidad de los datos es quizás el aspecto más importante en un problema de aprendizaje automático. Es muy dificil obtener buenos resultados si los datos son insuficientes, por lo que se considerará que este es el riesgo más grande del proyecto.
+	\item Severidad (S): 10. La calidad de los datos es quizás el aspecto más importante en un problema de aprendizaje automático. Es muy difícil obtener buenos resultados si los datos son insuficientes, por lo que se considerará que este es el riesgo más severo del proyecto.
 	\item Probabilidad de ocurrencia (O): 6. Las cámaras con las que se obtienen los datos de las embarcaciones deben importarse y la instalación y operación implica coordinar de recursos. No se tiene control sobre la prioridad que se dé a estas actividades. 
 \end{itemize}
 
 Riesgo 2. Bajo desempeño de los modelos: los resultados obtenidos por los algoritmos están por debajo de los esperados.
 \begin{itemize}
 	\item Severidad (S): 10. Si el reporte generado por el algoritmo está muy por debajo de lo esperado y no se puede confiar en las detecciones, la propuesta de utilizar IA se torna inviable.
-	\item Probabilidad de ocurrencia (O): 4. Los algoritmos han sido ensayados en otros escenarios y se están utilizando en otros campos de la industria con resultados aceptables, pero no deja de ser un área novedosa sobre la cuál no se tiene experiencia suficiente.
+	\item Probabilidad de ocurrencia (O): 4. Los algoritmos han sido ensayados en otros escenarios y se están utilizando en otros campos de la industria con resultados aceptables, pero no deja de ser un área novedosa sobre la cual no se tiene experiencia suficiente.
 \end{itemize}
 
 Riesgo 3. Costo excesivo de desarrollo: los análisis y evolución muestran resultados favorables, pero se requiere más esfuerzo del previsto. La complejidad de ambientes y herramientas, tiempos de entrenamiento, diagnóstico de fallas insumen mayores horas de las planificadas y retrasan y consumen horas asignadas a otras tareas.
@@ -781,8 +781,8 @@ Riesgo 1. Datos insuficientes: plan de mitigación. Lograr el mayor avance posib
 Riesgo 2. Bajo desempeño de modelos: plan de mitigación. Profundizar en las arquitecturas y fundamentos matemáticos de cada modelo para poder hacer ajustes y correcciones. Usar otros trabajos como referencia para incorporar mejoras. 
 \begin{itemize}
 	\item Nueva asignación de S y O: 10.
-	\subitem Severidad (S): 5. realizar modificaciones sobre arquitecturas que conocidas penaliza la simplicidad de la solución e implica un esfuerzo adicional (puede ser más dificil convertir formatos y usar herramientas estándar, por ejemplo), pero compromete en menor grado los objetivos principales.
-	\subitem Probabilidad de ocurrencia (O):2. Una buena comprensión de los fundamentes permite diagnosticar problemas y encontrar estrategias para solventarlos.
+	\subitem Severidad (S): 5. realizar modificaciones sobre arquitecturas que conocidas penaliza la simplicidad de la solución e implica un esfuerzo adicional (puede ser más difícil convertir formatos y usar herramientas estándar, por ejemplo), pero compromete en menor grado los objetivos principales.
+	\subitem Probabilidad de ocurrencia (O):2. Una buena comprensión de los algoritmos permite diagnosticar problemas y encontrar estrategias para solventarlos.
 \end{itemize}
 
 Riesgo 3. Costo excesivo: plan de mitigación. Renegociar el alcance y plazos de entrega. Procurar capitalizar esfuerzos de proyectos similares ({\em know-how} o reutilizar componentes) o con aspectos en común.
@@ -908,6 +908,8 @@ Verificación y validación:
 % REQ
 \item Req \#15:  El diseño debe ser modular y los componentes deben estar desacoplados, para poder realizar variaciones sobre la configuración según cada escenario.
 
+\pagebreak
+
 Verificación y validación:
 \subitem Verificación: revisión de especialista.
 \subitem Validación: inspección.
@@ -993,7 +995,7 @@ Los materiales para ensamblado del prototipo (chasis, fichas, y conectores) pued
 
 Se indica para cada tarea del proyecto la frecuencia e indicadores propuestos.
 
-Por ser un trabajo de SW / desarrollo de modelos de ML en el cuál no existen componentes físicos se han considerado los siguientes indicadores de avance:
+Por ser un trabajo de SW / desarrollo de modelos de ML en el cual no existen componentes físicos se han considerado los siguientes indicadores de avance:
 
 \begin{itemize}
 	\item Líneas de Código (LDC). Es una métrica estándar en desarrollo de SW. Permite comparar el esfuerzo invertido en un componente comparándolo con componentes que realicen funciones en el mismo lenguaje de programación. No sólo es aplicable a lenguajes de programación, sino a cualquier archivo de texto. Los Sistemas de Control de Versiones (SVC) como GIT -que se utilizará en este proyecto- generan automáticamente reportes para esta y otras estadísticas, por lo que este indicador puede ser consultado a demanda del interesado sin intervención de los desarrolladores.
