@@ -1,0 +1,4 @@
+*/BUILD
+.hg
+mbed-os
+*.lib
