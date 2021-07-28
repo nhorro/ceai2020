@@ -111,8 +111,6 @@ Métodos para verificación de requerimientos:
 
 ### 15. Proceso de cierre
 
-
-
 Observaciones
 
 Sobre las presentaciones
@@ -123,13 +121,15 @@ Sobre las presentaciones
 
 ## Clase 6. Viernes 09/04/2021
 
+Pautas: https://docs.google.com/document/d/1YmUQPJIRmxwih4ZgtY6l6E_D4UXxDAIpNSmLrPOwijE/edit
+
 ## Clase 7. Viernes 16/04/2021
 
-- Presentación. Aprox 15min c/u.
+- Presentaciones. Aprox 15min c/u.
 
 ## Clase 8. Viernes 23/04/2021
 
-- Presentación. Aprox 15min c/u.
+- Presentaciones. Aprox 15min c/u.
 
 ## Información útil
 
