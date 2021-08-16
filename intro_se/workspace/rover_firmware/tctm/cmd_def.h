@@ -1,15 +1,33 @@
+/**
+ * @file cmd_def.h Definición de códigos de telecomandos (OPCODES).
+ */
+
 #ifndef CMD_DEF_H
 #define CMD_DEF_H
 
+/** Definición de OPCODES (códigos de operación de los telecomandos). */
 enum opcode_index_e {
+    /** Pedido de telemetría. Si la aplicación de control lo realiza periódicamente, puede usarse como HEARBEAT.
+     */
 	OPCODE_REQUEST_TMY						= 0x00,
+
+    /** Encender led de prueba.
+     *  Comando para ensayos de puesta en marcha (PEM).
+     */
 	OPCODE_LED_ON							= 0x01,
+
+    /** Apagar led de prueba.
+     *  Comando para ensayos de puesta en marcha (PEM).
+     */
 	OPCODE_LED_OFF							= 0x02,
 
-	// BEGIN Application Specific Opcodes here
+	// BEGIN Opcodes específicos de la aplicación
+
+    /** Establecer velocidades de motores (modo manual, sin PID)
+     */
 	OPCODE_UPDATE_MOTOR_SPEEDS				= 0x03,
 
-	// END Application Specific Opcodes here
+	// END Opcodes específicos de la aplicación
 	OPCODE_LAST
 };
 

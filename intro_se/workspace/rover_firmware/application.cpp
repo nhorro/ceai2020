@@ -3,7 +3,7 @@
 application::application() :
 	opcodes
 		{ 
-			// Basicos
+			// Básicos
 			{ &application::request_tmy, opcode_flags::default_flags },
 			{ &application::led_on, opcode_flags::enable_execution_status_report },
 			{ &application::led_off, opcode_flags::enable_execution_status_report },
@@ -16,25 +16,92 @@ application::application() :
 			// END Comandos específicos de la aplicación
 		}
 	, periodic_tasks 
+        /* IMPORTANTE: el orden de las tareas debe ser: 
+                1. Leer sensores.
+                2. Aplicar filtros / estimar.
+                3. Actualizar valores de actuadores.
+                3. Publicar telemetrías.
+
+            Nota: no todas las tareas requieren la misma frecuencia.
+        */
 		{
-			{ false, 0, (1000/IMU_UPDATE_FREQ), &application::update_imu }, 
-			{ false, 0, (1000/IMU_REPORT_FREQ), &application::send_imu_report }, 
-			{ false, 0, (1000/GENERAL_TMY_REPORT_FREQ), &application::send_general_tmy_report }
+            // Lectura de IMU
+			{ 
+                true, // enabled
+                periodic_task_entry::execution_context::application, // ISR/APP
+                0, // internal counter
+                uint32_t(CONTROL_CYCLE_FREQ/IMU_UPDATE_FREQ), 
+                &application::update_imu 
+            }, 
+
+            // Envío de reporte de IMU
+			{ 
+                true, 
+                periodic_task_entry::execution_context::application, 
+                0, uint32_t(CONTROL_CYCLE_FREQ/IMU_REPORT_FREQ),
+                &application::send_imu_report 
+            },
+
+            // Envío de reporte de TMY general
+			{ 
+                true, 
+                periodic_task_entry::execution_context::application, 
+                0, 
+                uint32_t(CONTROL_CYCLE_FREQ/GENERAL_TMY_REPORT_FREQ), 
+                &application::send_general_tmy_report 
+            },
+
+            
 		}
+    , periodic_task_counter(0)
+    , task_ticker_queue(mbed_event_queue())
     , serial_port(USBTX, USBRX)
     , led(LED1)
 {
-    this->timer.start();	
-    this->control_cycle_t0 = std::chrono::duration_cast<std::chrono::milliseconds>(this->timer.elapsed_time()).count();
+    // Registro de tareas periódicas
+    this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
+    this->periodic_task_ticker.attach(
+        callback(this, &application::execute_periodic_tasks), 
+        1.0f / CONTROL_CYCLE_FREQ
+    );
+    this->task_ticker_queue->dispatch_forever();
 
-    //printf("%d\n\r",this->control_cycle_t0);
+    // En mbedOS 5:
+    //this->serial_port.attach( callback(this, &application::on_uart_rx), RxIrq );
+    // En mbedOS 6 (NO ANDA?) FIXME!
+    this->serial_port.sigio(callback(this,&application::on_uart_rx));
+}
 
-    this->periodic_tasks[2].enabled=true;
-    this->periodic_tasks[2].t0 = this->control_cycle_t0;		
+void application::on_uart_rx()
+{    
+    // FIXME: acá se debería poder alimetnar la FSM de lectura de telecomandos, pero está fallando
+    //static char buf[32] = {0};
+    //ssize_t n = this->serial_port.read(buf, sizeof(buf));    
+
+    // Debugging -> Se está recibiendo algo?
+    this->task_ticker_queue->call(callback(this,&application::read_commands));
+}
+
+
+void application::read_commands()
+{
+    // Debugging
+    static char buf[32] = {0};
+    ssize_t n = this->serial_port.read(buf, sizeof(buf));
+    printf("Read commands %d\n\r",n);
+    if (EAGAIN != n)
+    {
+        char* pbuf = buf;
+        do {
+             printf("Read: %c\n\r",*pbuf++);
+            //this->feed(*pbuf++);
+        } while(--n);
+    }
 }
 
 void application::setup()
 {
+    // 1. Configurar conexión serie de aplicación + control en modo asincrónico.
     this->serial_port.set_baud(APP_SERIAL_IF_BAUDRATE);
     this->serial_port.set_format(
         /* bits */ 8,
@@ -43,89 +110,34 @@ void application::setup()
     );
     this->serial_port.set_blocking(false);
 
-    
-	//Wire.begin();
-	//SerialIF.begin(APP_SERIAL_IF_BAUDRATE);
-	//pinMode(LED_BUILTIN, OUTPUT);
+    // 2. FIXME configurar L298N
 
-	// BEGIN Application Setup Code here
-	//this->motor_ctl.setup();
+    // 3. FIXME configurar I2C + IMU
 
-	//
-	//if ( this->imu.setup() >= 0 )
-	//{
-    //		this->imu.set_mag_bias_correction( -4.798046398046397, 231.2808302808303, 30.96239316239316); // see notebook		
-	//}
-	//else
-	//{
-    //		this->tmy[TMY_PARAM_STATUS] |= STATUS_AHRS_FAIL;
-	//}
+    // 4. FIXME configurar Tacómetros
 
-	//if ( false )
-	//{
-    //		this->tmy[TMY_PARAM_STATUS] |= STATUS_GPS_FAIL;
-	//}
-	// END Application Setup  Code here
+    // 5. FIXME configurar GPS
 }
 
 
-void application::read_commands()
-{
-    // Leer comandos
-    // FIXME: acá se rompe
-    static char buf[32] = {0};
-    ssize_t n = this->serial_port.read(buf, sizeof(buf));
-    if (EAGAIN != n)
-    {
-        char* pbuf = buf;
-        do {
-             //printf("%c\n\r",*pbuf++);
-            //this->feed(*pbuf++);
-        } while(--n);
-    }
-    //static char* buf = new char[1];
-    //ssize_t n = this->serial_port.read(buf, 1);
-    //if () {        
-        //do {
-            //printf("%c\n\r",buf);
-            //this->feed(buf);
-        //} while(--n);
-    //}    
-}
+
 
 void application::loop()
 {	
-    this->read_commands();
-	
-	uint32_t t1 = std::chrono::duration_cast<std::chrono::milliseconds>(this->timer.elapsed_time()).count();
-	
+    //this->read_commands();	
+	//uint32_t t1 = std::chrono::duration_cast<std::chrono::milliseconds>(this->timer.elapsed_time()).count();
     // Calcular dt desde el comienzo del ciclo de control.
-	uint32_t dt = this->control_cycle_t0 > t1 ? 
-		1 + this->control_cycle_t0 + ~t1 : t1 - this->control_cycle_t0;
-	if(dt>=1000)
-	{
-		this->control_cycle_t0 = std::chrono::duration_cast<std::chrono::milliseconds>(this->timer.elapsed_time()).count();
-		this->align_periodic_tasks_with_control_cycle();
-
-        // Parpadear led hasta que se recibe el primer comando.
-        // Esto se usa como indicador de que el SW está en ejecución.
-		if(this->tmy[TMY_PARAM_ACCEPTED_PACKETS]==0)
-		{
-            this->led.write(!this->led.read());
-		}	
-
-        //printf("cycle. t0:%d, t1: %d\n\r",this->control_cycle_t0, t1);	
-  	}
-
+	// uint32_t dt = this->control_cycle_t0 > t1 ? 
+    // 1 + this->control_cycle_t0 + ~t1 : t1 - this->control_cycle_t0;
 	// BEGIN Código específico de la aplicación
 	// END Código específico de la aplicación
-
-	this->execute_periodic_tasks(t1);
-	this->check_timeouts();
+	//this->execute_periodic_tasks(t1);
+	//this->check_timeouts();
 }
 
 void application::handle_packet(const uint8_t* payload, uint8_t n)
 {
+    // El byte 0 es el código de opcode, el resto el payload. */
 	uint8_t opcode = payload[0];
 	if (OPCODE_REQUEST_TMY == opcode)
 	{
@@ -135,7 +147,10 @@ void application::handle_packet(const uint8_t* payload, uint8_t n)
 	}
 	else
 	{
+        // Incrementar contador de paquetes aceptados.
 		this->tmy[TMY_PARAM_ACCEPTED_PACKETS]++;
+
+        // Ejecutar comando y actualizar status y código de último comando
 		this->tmy[TMY_PARAM_LAST_ERROR] =
 				(opcode < OPCODE_LAST) ?
 						(this->*(opcodes[opcode].fn))(payload + 1,
@@ -143,7 +158,7 @@ void application::handle_packet(const uint8_t* payload, uint8_t n)
 						error_code::unknown_opcode;
 		this->tmy[TMY_PARAM_LAST_OPCODE] = static_cast<uint8_t>(opcode);
 
-		// Generar reporte de ejecución
+		// Si está el flag habilitado, generar reporte de ejecución
 		if ( this->opcodes->flags & opcode_flags::enable_execution_status_report )
 		{
 			this->get_payload_buffer()[0] = REPORT_COMMAND_EXECUTION_STATUS;
@@ -170,6 +185,8 @@ void application::send_impl(const uint8_t* buf, uint8_t n)
 
 void application::handle_connection_lost()
 {
+    // Si se perdió la conexión apagar el vehículo inmediatamente.
+
 	//REQUEST_EXTERNAL_RESET
 
 	//apagar motores
@@ -180,30 +197,60 @@ void application::handle_connection_lost()
 	//  	l298_motor_control::motor_control_flags::motor_b );
 }
 
-void application::align_periodic_tasks_with_control_cycle()
+void application::start_control_cycle()
 {
-	for(int i;i<N_PERIODIC_TASKS;i++)
-	{
-		this->periodic_tasks[i].t0 = this->control_cycle_t0;
-	}	
+    // Marcar el inicio de un ciclo de control. Por ahora sólo debugging.
+    static uint32_t iteration_counter = 0;
+    printf("Iteration %d.\n\r",iteration_counter++);
+    this->read_commands();
 }
 
-void application::execute_periodic_tasks(uint32_t t)
+void application::execute_periodic_tasks()
 {
+    // 1. Inicio de ciclo de control
+    if (0 == this->periodic_task_counter)
+    {
+        // Parpadear led hasta que se recibe el primer comando.
+        // Esto se usa como indicador de que el SW está en ejecución.
+        if(this->tmy[TMY_PARAM_ACCEPTED_PACKETS]==0)
+        {
+            this->led.write(!this->led.read());
+        }	
+        this->task_ticker_queue->call(callback(this,&application::start_control_cycle));
+    }
+ 
+    // 2. Tareas períodicas
 	for(int i=0;i<N_PERIODIC_TASKS;i++)
 	{
 		if( this->periodic_tasks[i].enabled)
 		{
-			uint32_t dt = this->periodic_tasks[i].t0  > t ? 
-				1 + this->periodic_tasks[i].t0  + ~t : t - this->periodic_tasks[i].t0;
-            //printf("pt. dt: %d\n\r", dt);                
-			if(dt>=this->periodic_tasks[i].period)
-			{	                
-				this->periodic_tasks[i].t0 = t;			
-				(this->*(this->periodic_tasks[i].entrypoint))();
-			}	
+            if (0 == this->periodic_tasks[i].counter )
+            {
+                // Si la tarea puede ejecutarse en ISR, ejecutar inmediatamente.
+                // De lo contrario, encolar para ejecutar en espacio de usuario.
+                if(application::periodic_task_entry::execution_context::application == 
+                   this->periodic_tasks[i].exec_ctx)
+                {
+                    this->task_ticker_queue->call(callback(this,this->periodic_tasks[i].entrypoint));
+                }
+                else 
+                {
+                    (this->*(this->periodic_tasks[i].entrypoint))();
+                }
+            }
+
+            if(++this->periodic_tasks[i].counter==this->periodic_tasks[i].period)
+            {
+                this->periodic_tasks[i].counter = 0;
+            }
 		}
 	}
+
+    // 3. Incrementar contador
+    if ( ++this->periodic_task_counter >= this->periodic_task_counter_max)
+    {
+        this->periodic_task_counter = 0;
+    }
 }
 
 /* Opcodes */
@@ -241,31 +288,26 @@ application::error_code application::update_motor_speeds(const uint8_t* payload,
 
 void application::send_general_tmy_report()
 {
-    //printf("Report!\n\r");
-
+    //printf("%03d send_general_tmy_report\n\r",this->periodic_task_counter);
 	this->get_payload_buffer()[0] = REPORT_GENERAL_TELEMETRY;
 	this->get_payload_buffer()[1] = this->tmy[TMY_PARAM_ACCEPTED_PACKETS];
 	this->get_payload_buffer()[2] = this->tmy[TMY_PARAM_REJECTED_PACKETS];
 	this->get_payload_buffer()[3] = this->tmy[TMY_PARAM_LAST_OPCODE];
 	this->get_payload_buffer()[4] = this->tmy[TMY_PARAM_LAST_ERROR];
 	this->get_payload_buffer()[5] = this->tmy[TMY_PARAM_STATUS];
-	this->send(1+5);
+	//this->send(1+5);
 }
 
 void application::send_imu_report()
 {
-	// BEGIN Application TMY Handling here			
+    //printf("%03d send_imu_report\n\r",this->periodic_task_counter);
+
 	this->get_payload_buffer()[0] = REPORT_IMU_AHRS_STATE;
 	//this->get_payload_buffer()[1] = (this->imu.get_status()) >= 0 ? true : false;
 	//this->get_payload_buffer()[2] = 0; // spare
 	//this->get_payload_buffer()[3] = 0; // spare 
 
-	// BEGIN Application TMY Handling here			
-	//this->get_payload_buffer()[0] = REPORT_IMU_AHRS_STATE;
-	//this->get_payload_buffer()[1] = (this->imu.get_status()) >= 0 ? true : false;
-	//this->get_payload_buffer()[2] = 0; // spare
-	//this->get_payload_buffer()[3] = 0; // spare 
-
+    // Cuidado con el endianness acá!
 	//memcpy(  &this->get_payload_buffer()[4], 
     // 		 reinterpret_cast<const uint8_t*>(this->imu.get_processed_values()), 40);	
 	//memcpy(  &this->get_payload_buffer()[4+40], 
@@ -273,12 +315,12 @@ void application::send_imu_report()
 	//memcpy(  &this->get_payload_buffer()[4+40+12], 
     //		 reinterpret_cast<const uint8_t*>(this->imu.get_gyro_euler_angles()), 12);	
 
-	this->send(4 + (10*4) + (3*4) + (3*4) );
-	// END Application TMY Handling here	
+	//this->send(4 + (10*4) + (3*4) + (3*4) );
 }
 
 void application::update_imu()
 {	
+    //printf("%03d update_imu\n\r",this->periodic_task_counter);
     /*
 	if( !this->tmy[TMY_PARAM_STATUS] & STATUS_AHRS_FAIL )
 	{

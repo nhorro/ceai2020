@@ -1,3 +1,7 @@
+/**
+ * @file protocol.h Protocolo de comunicación basado en paquetes, inspirado en MAVLINK y otros similares.
+ */
+
 #include "protocol.h"
 
 namespace protocol {
@@ -89,6 +93,7 @@ void packet_decoder::handle_pkt_state_expecting_payload()
 			this->last_received_char;
 	if (++this->received_payload_index == this->payload_length)
 	{
+        // FIXME: se puede usar CRC de STM32/HAL/MBED/etc.
 		this->expected_crc16 = calc_crc16(
 				this->received_payload_buffer,
 				this->received_payload_index);
@@ -144,10 +149,11 @@ void packet_decoder::feed(uint8_t c)
 
 void packet_decoder::check_timeouts()
 {
-	// Handle timeouts here	
+	// 1. Obtener tiempo actual.
 	uint32_t t1 = std::chrono::duration_cast<std::chrono::milliseconds>(this->timer.elapsed_time()).count();
 
-	// Check timeout of current packet being processed
+	// Verificar tiempo que transcurrió desde que se comenzo el procesamiento del paquete.
+    // Si se excede, reiniciar FSM.
 	uint32_t dt = this->start_of_packet_t0 > t1 ? 
 		1 + this->start_of_packet_t0 + ~t1 : t1 - this->start_of_packet_t0;
 	if(dt>=PACKET_TIMEOUT_IN_MS)
@@ -155,7 +161,7 @@ void packet_decoder::check_timeouts()
     	this->reset();
   	}
 
-  	// Check heartbeat timeout
+  	// Verificar tiempo desde que se recibió un heartbeat.
 	dt = this->last_received_packet_t0 > t1 ? 
 		1 + this->last_received_packet_t0 + ~t1 : t1 - this->last_received_packet_t0;
 	if(dt>HEARTBEAT_TIMEOUT_IN_MS)

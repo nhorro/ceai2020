@@ -120,7 +120,7 @@ static char matrixKeypadScan()
     for( row=0; row<MATRIX_KEYPAD_NUMBER_OF_ROWS; row++ ) {
 
         for( i=0; i<MATRIX_KEYPAD_NUMBER_OF_ROWS; i++ ) {
-            keypadRowPins[i] = ON;
+            keypadRowPins[i] = ON;            
         }
 
         keypadRowPins[row] = OFF;

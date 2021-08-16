@@ -170,13 +170,15 @@ void alarmActivationUpdate()
         lm35ReadingsSum = lm35ReadingsSum + lm35ReadingsArray[i];
     }
     lm35ReadingsAverage = lm35ReadingsSum / NUMBER_OF_AVG_SAMPLES;
-       lm35TempC = analogReadingScaledWithTheLM35Formula ( lm35ReadingsAverage );    
+       lm35TempC = analogReadingScaledWithTheLM35Formula ( lm35ReadingsAverage ) +100;    
     
     if ( lm35TempC > OVER_TEMP_LEVEL ) {
         overTempDetector = ON;
     } else {
         overTempDetector = OFF;
     }
+
+    
 
     if( !mq2) {                      
         //gasDetectorState = ON;
