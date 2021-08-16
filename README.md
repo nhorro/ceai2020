@@ -29,8 +29,15 @@ Bimestre 5 (May-Jun 2021)
 
 Bimestre 6 (Jul-Ago 2021)
 
-- [Introducción a los Sistemas Embebidos ](ise)
+- [Introducción a los Sistemas Embebidos](intro_se)
+
+Bimestre 7 (Jul-Ago 2021)
+
+- [Taller de trabajo final](taller_trabajo_final)
+- [Curso electivo I]()
+- [Curso electivo II]()
 
 
+**Proyecto final**
 
-[Proyecto final](./proyecto_final)
+[Proyecto final](proyecto_final)
