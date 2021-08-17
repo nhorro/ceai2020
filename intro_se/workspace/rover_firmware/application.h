@@ -1,6 +1,8 @@
 #ifndef ROVER_APPLICATION_H
 #define ROVER_APPLICATION_H
 
+#include <mbed.h>
+
 #include <stdint.h>
 #include "protocol/protocol.h"
 #include "tctm/cmd_def.h" 		// Definición de telecomandos
@@ -8,8 +10,9 @@
 #include "tctm/report_def.h"	// Definición de reportes
 
 // FIXME
-//#include "l298n_motor_control.h"
-//#include "mpu9250_ahrs.h"
+#include "motor/l298n_motor_control.h"
+#include "tachometer/lm393_tachometer.h"
+//#include "ahrs/mpu9250_ahrs.h"
 
 #include "config.h"
 
@@ -190,12 +193,17 @@ private:
     DigitalOut led;
 
     /* Motor con L298 */
-	//l298_motor_control motor_ctl;
+	l298_motor_control motor_ctl;
 	int16_t speeds[2] = { 0, 0 };
+
+    /* Tacómetros */
+    lm393_tachometer tacho[4];
 
     /* IMU MPU9250 */
     float imu_state[10];
 	//mpu9250 imu;
+
+
 	
 	// END Datos específicos de la aplicación    
 };

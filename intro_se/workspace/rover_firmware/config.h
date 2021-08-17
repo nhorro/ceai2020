@@ -23,4 +23,7 @@
 /* Frecuencia del ciclo de control (Hz) */
 #define CONTROL_CYCLE_FREQ          100.0f
 
+
+#define WHEEL_ENCODER_N_TICKS 32
+
 #endif

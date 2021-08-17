@@ -57,6 +57,12 @@ application::application() :
     , task_ticker_queue(mbed_event_queue())
     , serial_port(USBTX, USBRX)
     , led(LED1)
+    , tacho { 
+        { D4, WHEEL_ENCODER_N_TICKS },
+        { D5, WHEEL_ENCODER_N_TICKS },
+        { D6, WHEEL_ENCODER_N_TICKS },
+        { D7, WHEEL_ENCODER_N_TICKS }
+    }
 {
     // Registro de tareas periódicas
     this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
@@ -110,11 +116,18 @@ void application::setup()
     );
     this->serial_port.set_blocking(false);
 
-    // 2. FIXME configurar L298N
+    // 2. Configurar L298N
+    this->motor_ctl.setup();
 
-    // 3. FIXME configurar I2C + IMU
+    // 3. FIXME configurar Tacómetros
+    this->tacho[0].setup();
+    this->tacho[1].setup();
+    this->tacho[2].setup();
+    this->tacho[3].setup();
 
-    // 4. FIXME configurar Tacómetros
+    // 4. FIXME configurar I2C + IMU
+
+    
 
     // 5. FIXME configurar GPS
 }
@@ -192,9 +205,9 @@ void application::handle_connection_lost()
 	//apagar motores
 	this->speeds[0] = 0;
 	this->speeds[1] = 0;
-	//this->motor_ctl.update_motor_speeds(this->speeds, 
-    //		l298_motor_control::motor_control_flags::motor_a|
-	//  	l298_motor_control::motor_control_flags::motor_b );
+	this->motor_ctl.set_motor_speeds(this->speeds, 
+    		l298_motor_control::motor_control_flags::motor_a|
+	   	    l298_motor_control::motor_control_flags::motor_b );
 }
 
 void application::start_control_cycle()
@@ -280,7 +293,7 @@ application::error_code application::update_motor_speeds(const uint8_t* payload,
 	this->speeds[0] = (payload[0] << 8) | (payload[1] & 0xFF);
 	this->speeds[1] = (payload[2] << 8) | (payload[3] & 0xFF);
 	uint8_t flags = payload[4];
-	//this->motor_ctl.update_motor_speeds(this->speeds, flags);
+	this->motor_ctl.set_motor_speeds(this->speeds, flags);
 	return error_code::success;
 }
 
