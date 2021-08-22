@@ -34,35 +34,28 @@ def crc16(buf):
         crc = ((crc << 8)&0xFFFF) ^ ((x << 12)&0xFFFF) ^ ((x <<5)&0xFFFF) ^ (x&0xFFFF)
     return crc
 
-def get_packet_payload(pkt):
-    #print(pkt)
-    # FIXME Convert to integer list
-    #pkt_as_ints = []
-    #for x in pkt:
-    #    pkt_as_ints.append(ord(x))    
-    #pkt = pkt_as_ints
-
+def get_packet_payload(pkt):    
     tmp = []
     if ( len(pkt) > (HEADER_SIZE) ):
         if ( (pkt[0] == PACKET_HEADER[0]) and
              (pkt[1] == PACKET_HEADER[1]) and
              (pkt[2] == PACKET_HEADER[2]) and
-             (pkt[3] == PACKET_HEADER[3]) ):
-                #print("Valid header")
+             (pkt[3] == PACKET_HEADER[3]) ):                
                 length = pkt[4]
-                expected_packet_length = (HEADER_SIZE+length+TRAILER_SIZE)
-                #print("Length:", pkt[4])                
+                expected_packet_length = (HEADER_SIZE+length+TRAILER_SIZE)             
                 if len(pkt) >= expected_packet_length:
                     for x in range(length):
                         tmp.append(pkt[HEADER_SIZE+x])
                 else:
-                    print("Invalid packet length: ", length, ". Expected: ", expected_packet_length)
-                    tmp = "Received: "
-                    for x in pkt:
-                        tmp+="%02X " % x
-                    print(tmp)
+                    #print("Tamaño de paquete inválido: ", length, ". Esperado: ", expected_packet_length)
+                    #tmp = "Recibido: "
+                    #for x in pkt:
+                    #    tmp+="%02X " % x
+                    #print(tmp)
         else:
-            print("Header mismatch. Received packet:", pkt) # TODO: log
+            #print("Header inválido. Recibido:", pkt) # TODO: log
+            pass
+            
     return tmp
 
 class Connection(Thread):

@@ -23,9 +23,14 @@ enum opcode_index_e {
 
 	// BEGIN Opcodes específicos de la aplicación
 
-    /** Establecer velocidades de motores (modo manual, sin PID)
+    /** Establecer potencia de motores (modo manual, sin PID)
      */
-	OPCODE_UPDATE_MOTOR_SPEEDS				= 0x03,
+	OPCODE_UPDATE_MOTOR_THROTTLES			= 0x03,
+
+    /** Establecer velocidad de motores (RPM)
+     */
+	OPCODE_UPDATE_MOTOR_SPEED_SETPOINTS		= 0x04,
+
 
 	// END Opcodes específicos de la aplicación
 	OPCODE_LAST

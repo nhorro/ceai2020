@@ -21,6 +21,12 @@ enum report_index_e {
     /** Reporte con estado de IMU. */
 	REPORT_IMU_AHRS_STATE							=	0x82,
 
+    /** Reporte con de movimiento (tacómetros y motores). */
+	REPORT_MOTION_CONTROL_STATE						=	0x83,
+
+    /** Reporte de posición (GPS). */
+	REPORT_GPS_STATE		        				=	0x84,
+
 	// END Reportes específicos de la aplicación
     
 	REPORT__LAST

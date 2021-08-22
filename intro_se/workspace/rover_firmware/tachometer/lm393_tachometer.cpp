@@ -7,13 +7,13 @@ lm393_tachometer::lm393_tachometer(PinName pin,int n_ticks_per_rev):
         , rpm(0)
         , encoder_k(1.0f/n_ticks_per_rev)
 {
-    /* Registrar interrupción de incremento en flaco descendente. */
-    this->irq.fall(callback(this, &lm393_tachometer::tick));
+
 }
 
 void lm393_tachometer::setup()
 {
-    // Modo debugging?
+    /* Registrar interrupción de incremento en flaco descendente. */
+    this->irq.fall(callback(this, &lm393_tachometer::tick));
 }
 
 void lm393_tachometer::tick() 

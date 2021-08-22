@@ -17,7 +17,7 @@
 #include "config.h"
 
 // Cantidad de tareas periódicas
-#define N_PERIODIC_TASKS 3
+#define N_PERIODIC_TASKS 9
 
 /** Clase aplicación. 
  * Notar que se heredan el codificador y decodificador de paquetes, es decir, 
@@ -37,10 +37,6 @@ public:
     /** Inicialización. Incluye configuración de periféricos, tests iniciales, etc. */
 	void setup();
 
-    /** Lazo de control. 
-    *   Eliminar si se puede. 
-    *   Se prefiere tareas períodicas + handlers para eventos asincrónicos. */
-	void loop();
 private:
     /* Tabla de telemetrías */
 	uint8_t tmy[TMY_PARAM_LAST] __attribute__((aligned (4)));	
@@ -99,13 +95,11 @@ private:
     /** Clase para manejo de puerto serie (el buffering lo gestiona la librería de mbed-os) */
     BufferedSerial serial_port;
 
-    /** Callback cuando hay datos nuevos en la UART. */
-    void on_uart_rx();
-
     /** Leer telecomandos entrantes (hardcoded a UART). */
-    void read_commands();
+    void read_telecommands();
 
-    /* Tareas períodicas */
+
+    /* Definición de tareas períodicas */
 
     /** El ticker es el scheduler del sistema encargado de invocar a todas las funciones períodicas
      *  según la frecuencia que se haya configurado. Se usa 'task' para refereirse a estas tareas, si bien
@@ -171,41 +165,68 @@ private:
 
 	/* Comandos :: Específicos de la aplicación */
 
-	// BEGIN comandos específicos de la aplicación
+    /** Potencia de motores */
+	application::error_code set_motor_throttle(const uint8_t* payload, uint8_t n);
 
-    /** Encendido de motores */
-	application::error_code update_motor_speeds(const uint8_t* payload, uint8_t n);
+    /* Velocidad de motores */
+    application::error_code set_motor_speed_setpoints(const uint8_t* payload, uint8_t n);
 
-	// END comandos específicos de la aplicación
+    /* Definición de reportes */
 
-	// BEGIN Datos y métodos específicos de la aplicación
-
-    /** Actualizar lecturas de IMU. */
-    void update_imu();
-
-    /** Enviar reporte de IMU. */
-	void send_imu_report();
+    /* Reportes :: Reportes de sistema */
 
     /** Enviar reporte de telemetría general. */
 	void send_general_tmy_report();
 
+    /* Reportes :: Reportes específicos de la aplicación */
+
+    /** Enviar reporte de IMU. */
+	void send_imu_report();
+
+    /** Enviar reporte de GPS. */
+	void send_gps_report();
+    
+    /* Enviar reporte de estado de motores */    
+    void send_motion_control_report();
+
+	/* Datos y métodos específicos de la aplicación */
+
+    /* Bloques funcionales */
+
     /* Led de prueba */
     DigitalOut led;
 
+    /* IMU */
+
     /* Motor con L298 */
-	l298_motor_control motor_ctl;
-	int16_t speeds[2] = { 0, 0 };
+	//l298_motor_control motor_ctl;
+	int16_t throttles[2] = { 0, 0 };
+    float speed_setpoints[2] = { 0.0f, 0.0f };
+
+    /* Escribir motores */    
+    void write_motors();
 
     /* Tacómetros */
-    lm393_tachometer tacho[4];
+    //lm393_tachometer tacho[4];
+    float tacho_readings[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; // FIXME pasar a 0
+
+    /** Actualizar lecturas de tacómetros. */
+    void read_tachometers();
 
     /* IMU MPU9250 */
     float imu_state[10];
 	//mpu9250 imu;
+    
+    /** Actualizar lecturas de IMU. */
+    void read_imu();	
 
+    /* GPS */
 
-	
-	// END Datos específicos de la aplicación    
+    /* Leer GPS (UART) */
+    void read_gps();
+
+    float gps_lon;
+    float gps_lat;
 };
 
 #endif // ROVER_APPLICATION_H

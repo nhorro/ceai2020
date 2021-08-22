@@ -5,12 +5,12 @@
 
 #include <stdint.h>
 
-#define L298_PIN_ENA D0 // FIXME
-#define L298_PIN_IN1 D1 // FIXME
-#define L298_PIN_IN2 D2 // FIXME
-#define L298_PIN_IN3 D3 // FIXME
-#define L298_PIN_IN4 D4 // FIXME
-#define L298_PIN_ENB D5 // FIXME
+#define DEFAULT_L298_PIN_ENA D0 // FIXME
+#define DEFAULT_L298_PIN_IN1 D1 // FIXME
+#define DEFAULT_L298_PIN_IN2 D2 // FIXME
+#define DEFAULT_L298_PIN_IN3 D3 // FIXME
+#define DEFAULT_L298_PIN_IN4 D4 // FIXME
+#define DEFAULT_L298_PIN_ENB D5 // FIXME
 
 /* Calibración de velocidad */
 #define MINIMUM_SPEED_A		0
@@ -32,8 +32,15 @@ public:
         motor_b = 0x2
     };
 
-    /** Constructor por defecto. */
-    l298_motor_control();
+    /** Constructor por defecto.
+     * @param ena Identificador de pin para control de velocidad de motor A (PWM).
+     * @param in1 Control de sentido de motor A, pin 1 (pin de salida digital).
+     * @param in2 Control de sentido de motor A, pin 2 (pin de salida digital).
+     * @param enb Identificador de pin para control de velocidad de motor B.
+     * @param in3 Control de sentido de motor B, pin 3 (pin de salida digital).
+     * @param in4 Control de sentido de motor B, pin 4 (pin de salida digital).
+     */
+    l298_motor_control( PinName ena, PinName in1, PinName in2, PinName enb, PinName in3, PinName in4);
 
     /** Configuración. */
     void setup();

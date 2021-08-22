@@ -2,11 +2,11 @@
 
 #define DEFAULT_MOTOR_ACC 1.0 
 
-l298_motor_control::l298_motor_control() 
+l298_motor_control::l298_motor_control(PinName ena, PinName in1, PinName in2, PinName enb, PinName in3, PinName in4) 
 : 
   motors {
-	    { L298_PIN_ENA, L298_PIN_IN1, L298_PIN_IN2, 0.0, 0.0 },
-	    { L298_PIN_ENB, L298_PIN_IN3, L298_PIN_IN4, 0.0, 0.0 }
+	    { ena, in1, in2, 0.0, 0.0 },
+	    { enb, in3, in4, 0.0, 0.0 }
 	}
     , control_mode(motor_control_mode::manual)
 {
