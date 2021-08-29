@@ -1,5 +1,4 @@
 #include "application.h"
-#include "l298n_motor_control.h"
 
 application::application() :
 	opcodes
@@ -12,7 +11,7 @@ application::application() :
 			// BEGIN Comandos específicos de la aplicación
 
 			// Control del rover
-			{ &application::set_motor_throttle, opcode_flags::default_flags },
+			{ &application::set_motor_throttles, opcode_flags::default_flags },
             { &application::set_motor_speed_setpoints, opcode_flags::default_flags }
 
 			// END Comandos específicos de la aplicación
@@ -37,8 +36,8 @@ application::application() :
             Nota: no todas las tareas requieren la misma frecuencia.
         */
 		{
-            // Lectura de telecomandos de UART.
-			{ 
+            // Lectura de telecomandos de UART.        
+			[task_read_telecommands] = { 
                 true, // enabled
                 periodic_task_entry::execution_context::application, // ISR/APP
                 0, // internal counter
@@ -47,7 +46,7 @@ application::application() :
             }, 
 
             // Lectura de IMU
-			{ 
+			[task_read_imu] = { 
                 true, // enabled
                 periodic_task_entry::execution_context::application, // ISR/APP
                 0, // internal counter
@@ -56,7 +55,7 @@ application::application() :
             },
             
             // Lectura de tacómetros
-			{ 
+			[task_read_tachometers]= { 
                 true, // enabled
                 periodic_task_entry::execution_context::application, // ISR/APP
                 0, // internal counter
@@ -65,7 +64,7 @@ application::application() :
             },  
 
             // Lectura de GPS
-			{ 
+			[task_read_gps]={ 
                 true, // enabled
                 periodic_task_entry::execution_context::application, // ISR/APP
                 0, // internal counter
@@ -74,7 +73,7 @@ application::application() :
             },  
 
             // Escritura de motores
-            { 
+            [task_write_motors] = { 
                 true, // enabled
                 periodic_task_entry::execution_context::application, // ISR/APP
                 0, // internal counter
@@ -83,7 +82,7 @@ application::application() :
             },  
 
             // Envío de reporte de TMY general
-			{ 
+			[task_send_general_report] = { 
                 true, 
                 periodic_task_entry::execution_context::application, 
                 0, 
@@ -92,7 +91,7 @@ application::application() :
             },
 
             // Envío de reporte de estado de motores
-			{ 
+			[task_send_motion_report] = { 
                 true, 
                 periodic_task_entry::execution_context::application, 
                 0, 
@@ -101,7 +100,7 @@ application::application() :
             },
 
             // Envío de reporte de IMU
-			{ 
+			[task_send_imu_report] = { 
                 true, 
                 periodic_task_entry::execution_context::application, 
                 0, uint32_t(CONTROL_CYCLE_FREQ/IMU_REPORT_FREQ),
@@ -109,7 +108,7 @@ application::application() :
             },
 
             // Envío de reporte de GPS
-			{ 
+			[task_send_gps_report] = { 
                 true, 
                 periodic_task_entry::execution_context::application, 
                 0, uint32_t(CONTROL_CYCLE_FREQ/GPS_REPORT_FREQ),
@@ -120,14 +119,67 @@ application::application() :
     , task_ticker_queue(mbed_event_queue())
     , serial_port(USBTX, USBRX)
     , led(LED1)
-    /*
-    , tacho { 
-        { D4, WHEEL_ENCODER_N_TICKS },
-        { D5, WHEEL_ENCODER_N_TICKS },
-        { D6, WHEEL_ENCODER_N_TICKS },
-        { D7, WHEEL_ENCODER_N_TICKS }
+    , motor_ctl( DEFAULT_L298_PIN_ENA, DEFAULT_L298_PIN_IN1, DEFAULT_L298_PIN_IN2, 
+                 DEFAULT_L298_PIN_ENB, DEFAULT_L298_PIN_IN3, DEFAULT_L298_PIN_IN4)    
+    , tacho{ 
+        { DEFAULT_TACHO1_PIN, WHEEL_ENCODER_N_TICKS },
+        { DEFAULT_TACHO2_PIN, WHEEL_ENCODER_N_TICKS },
+        { DEFAULT_TACHO3_PIN, WHEEL_ENCODER_N_TICKS },
+        { DEFAULT_TACHO4_PIN, WHEEL_ENCODER_N_TICKS } }
+    // BEGIN  BUG
+    /* La siguiente línea que instancia la clase IMU es la causante del error 
+       que se muestra a continuación:      
+    
+    ++ MbedOS Error Info ++
+    Error Status: 0x80020125 Code: 293 Module: 2
+    Error Message: CMSIS-RTOS error: Stack overflow
+    Location: 0x800D38F
+    Error Value: 0x1
+    Current Thread: main Id: 0x20005D98 Entry: 0x800CEA9 StackSize: 0x1000 StackMem: 0x200045E0 SP: 0x2007FF30 
+    For more info, visit: https://mbed.com/s/error?error=0x80020125&tgt=NUCLEO_F767ZI
+    -- MbedOS Error Info --
+
+    Esta línea lo único que hace es instanciar una clase mpu9250 (imu), que a su vez 
+    instancia una clase I2C.
+    El resto de las invocaciones a la instancia imu han sido comentadas en el código.
+
+    ¿Qué implica instanciar imu?
+
+    La clase imu, con excepción de i2c, sólo instancia tipos primitivos:
+
+    ~~~
+    mpu9250::mpu9250(uint8_t mpu_addr,uint8_t mag_addr, PinName sda, PinName scl):
+    // MbedOS usa addresses de 8bit (ver https://os.mbed.com/docs/mbed-os/v6.5/apis/i2c.html)
+    mpu_addr8(mpu_addr<<1), // uint8_t
+    mag_addr8(mag_addr<<1), // uint8_t
+    i2c(sda, scl), // <-- acá está el problema?
+    mpu_valid(false), // bool
+    mag_valid(false), // bool
+    total_readings(0), // uint32_t
+    mpu9250_readings_ok(0), // uint32_t
+    mpu9250_readings_failed(0), // uint32_t
+    ak8963_readings_ok(0),  // uint32_t
+    ak8963_readings_failed(0)   // uint32_t
+    {
+        // (no hay código)
     }
+    ~~~
+
+    Entonces, el problema parece ser la instanciación de i2c(sda, scl).
+    Pero ejecutándolo en una aplicación limpia funciona. 
+    Cómo se pued debuggear esto?
+    Posibles causas:
+        - ¿Conflicto de pines? ¿Pero porqué segfault?
+        - ¿Memoria? Pero no hay alocación dinámica, debería saltar en tiempo de ejecución.
+        - ¿Superación de stack por variables locales? Se inicializan miembros de la clase, por lo 
+          tanto no hay uso de stack.
+
+    Nota: el error se puede repetir sin conectar ningún periférico, únicamente con USB. Por
+    más que el I2C esté desconectado, no debería fallar.
     */
+    , imu(MPU9250_ADDRESS, AK8963_ADDRESS, I2C_SDA, I2C_SCL) // Comentar para evitar bug
+    // END BUG
+    , gps(DEFAULT_GPS_PIN_TX, DEFAULT_GPS_PIN_RX)
 {
     // Registro de tareas periódicas
     this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
@@ -142,15 +194,12 @@ void application::read_telecommands()
 {       
     if ( this->serial_port.readable() )
     {
-        // Debugging
         static char buf[32] = {0};
         ssize_t n = this->serial_port.read(buf, sizeof(buf));
-        //printf("Read commands %d\n\r",n);
         if (EAGAIN != n)
         {
             char* pbuf = buf;
             do {
-                //printf("Read: %c\n\r",*pbuf++);
                 this->feed(*pbuf++);
             } while(--n);
         }
@@ -168,19 +217,19 @@ void application::setup()
     );
 
     // 2. Configurar L298N
-    //this->motor_ctl.setup();
+    this->motor_ctl.setup();
 
-    // 3. FIXME configurar Tacómetros
-    //this->tacho[0].setup();
-    //this->tacho[1].setup();
-    //this->tacho[2].setup();
-    //this->tacho[3].setup();
+    // 3. Configurar Tacómetros
+    this->tacho[0].setup(false);
+    this->tacho[1].setup(false);
+    this->tacho[2].setup(false);
+    this->tacho[3].setup(false);
 
-    // 4. FIXME configurar I2C + IMU
-
+    // 4. Configurat IMU
+    //this->imu.setup();
     
-
-    // 5. FIXME configurar GPS
+    // 5. Configurar GPS
+    this->gps.setup();
 }
 
 
@@ -241,11 +290,11 @@ void application::handle_connection_lost()
 	//apagar motores
 	this->throttles[0] = 0;
 	this->throttles[1] = 0;
-    /*
-	this->motor_ctl.set_motor_speeds(this->speeds, 
+    
+	this->motor_ctl.set_motor_throttles(this->throttles, 
     		l298_motor_control::motor_control_flags::motor_a|
 	   	    l298_motor_control::motor_control_flags::motor_b );
-    */
+    
 }
 
 void application::start_control_cycle()
@@ -253,7 +302,6 @@ void application::start_control_cycle()
     // Marcar el inicio de un ciclo de control. Por ahora sólo debugging.
     // static uint32_t iteration_counter = 0;
     //printf("Iteration %d.\n\r",iteration_counter++);
-    //this->read_commands();
 }
 
 void application::execute_periodic_tasks()
@@ -271,7 +319,7 @@ void application::execute_periodic_tasks()
     }
  
     // 2. Tareas períodicas
-	for(int i=0;i<N_PERIODIC_TASKS;i++)
+	for(int i=0;i<periodic_task_e::last_task;i++)
 	{
 		if( this->periodic_tasks[i].enabled)
 		{
@@ -326,7 +374,7 @@ application::error_code application::led_off(const uint8_t* payload, uint8_t n)
 
 // BEGIN Comandos específicos de la aplicación 
 
-application::error_code application::set_motor_throttle(const uint8_t* payload, uint8_t n)
+application::error_code application::set_motor_throttles(const uint8_t* payload, uint8_t n)
 {	
 	uint8_t flags = payload[4];
 
@@ -343,7 +391,7 @@ application::error_code application::set_motor_throttle(const uint8_t* payload, 
     // Actualizar TMY
     std::memcpy(&this->tmy[TMY_PARAM_MOTOR_A_THROTTLE_B0],&this->throttles,4);
 
-	//this->motor_ctl.set_motor_speeds(this->throttles, flags);
+	this->motor_ctl.set_motor_throttles(this->throttles, flags);
 	return error_code::success;
 }
 
@@ -372,42 +420,69 @@ application::error_code application::set_motor_speed_setpoints(const uint8_t* pa
 
 void application::read_imu()
 {	
-    this->tmy[TMY_PARAM_ACCEPTED_PACKETS];
-
-
     //printf("%03d update_imu\n\r",this->periodic_task_counter);
     /*
-	if( !this->tmy[TMY_PARAM_STATUS] & STATUS_AHRS_FAIL )
-	{
-        this->imu.read();
-        this->imu.transform_units();
-        this->imu.calc_euler_angles_from_accmag();  
-        this->imu.integrate_gyro_angles(millis());
-	}
+    
+    COMENTADO HASTA RESOLVER BUG
+
+    this->imu.process();    
+    this->sensor_fusion.update( this->imu.get_eng_values().acc[0],
+                                this->imu.get_eng_values().acc[1],
+                                this->imu.get_eng_values().acc[2],
+                                this->imu.get_eng_values().gyro[0]*madwick_sensor_fusion::PI/180.0f, 
+                                this->imu.get_eng_values().gyro[1]*madwick_sensor_fusion::PI/180.0f, 
+                                this->imu.get_eng_values().gyro[2]*madwick_sensor_fusion::PI/180.0f,  
+                                this->imu.get_eng_values().mag[0],  
+                                this->imu.get_eng_values().mag[1],  
+                                this->imu.get_eng_values().mag[2],
+                                1.0f/READ_IMU_FREQ );
+    */
+    // ax,ay,az,gx,gy,gz,mx,my,mz,temp
+    /*
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_RAW_ACCEL_X_B0],
+                &this->imu.get_raw_values(),  sizeof(float)*10);
+    
+    // x,y,z, w
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_QUAT_X_B0],
+                this->sensor_fusion.get_quaternion(),  sizeof(float)*4);
     */
 }
 
 void application::read_tachometers()
 {	
+    //this->tacho[0].debug();
+
     // Velocidad medida en tacómetro 1 (RPM)
-    // FIXME Actualizar 
-    // this->tacho_readings[0]
-
     this->tacho_readings[0]+=0.1f;
-    this->tacho_readings[1]+=0.1f;
-    this->tacho_readings[2]+=0.1f;
-    this->tacho_readings[3]+=0.1f;
+    this->tacho_readings[1]+=0.2f;
+    this->tacho_readings[2]+=0.3f;
+    this->tacho_readings[3]+=0.4f;
 
-    std::memcpy(&this->tmy[TMY_PARAM_TACHO1_SPEED_B0],this->tacho_readings,4*4);
+    //this->tacho_readings[0]=this->tacho[0].get_rpm();
+    //this->tacho_readings[1]=this->tacho[1].get_rpm();
+    //this->tacho_readings[2]=this->tacho[2].get_rpm();
+    //this->tacho_readings[3]=this->tacho[3].get_rpm();
+
+    this->tacho_counters[0]=this->tacho[0].get_total_tick_count();
+    this->tacho_counters[1]=this->tacho[1].get_total_tick_count();
+    this->tacho_counters[2]=this->tacho[2].get_total_tick_count();
+    this->tacho_counters[3]=this->tacho[3].get_total_tick_count();
+
+    std::memcpy(&this->tmy[TMY_PARAM_TACHO1_SPEED_B0],this->tacho_readings,8*4);
 }
 
 void application::read_gps()
-{	
-    this->gps_lon = 1245.0f;
-    this->gps_lat = 2241.0f;
+{	    
+    this->gps.process();
 
-    std::memcpy(&this->tmy[TMY_PARAM_GPS_LONG_B0],&this->gps_lon,4);
-    std::memcpy(&this->tmy[TMY_PARAM_GPS_LAT_B0],&this->gps_lat,4);
+    if(this->gps.is_valid())
+    {
+        this->gps_lon = this->gps.get_longitude();
+        this->gps_lat = this->gps.get_latitude();
+
+        std::memcpy(&this->tmy[TMY_PARAM_GPS_LONG_B0],&this->gps_lon,4);
+        std::memcpy(&this->tmy[TMY_PARAM_GPS_LAT_B0],&this->gps_lat,4);
+    }     
 }
 
 void application::write_motors()
@@ -434,19 +509,17 @@ void application::send_imu_report()
     //printf("%03d send_imu_report\n\r",this->periodic_task_counter);
 
 	this->get_payload_buffer()[0] = REPORT_IMU_AHRS_STATE;
-	this->get_payload_buffer()[1] = 0; // estado
+    // COMENTADO HASTA RESOLVER BUG DE IMU
+	//this->get_payload_buffer()[1] = (this->imu.is_mag_valid() << 1) |
+    //                                (this->imu.is_mpu_valid() << 0); 
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
 
-    // Cuidado con el endianness acá!
-	//memcpy(  &this->get_payload_buffer()[4], 
-    // 		 reinterpret_cast<const uint8_t*>(this->imu.get_processed_values()), 40);	
-	//memcpy(  &this->get_payload_buffer()[4+40], 
-	//		 reinterpret_cast<const uint8_t*>(this->imu.get_magacc_euler_angles()), 12);	
-	//memcpy(  &this->get_payload_buffer()[4+40+12], 
-    //		 reinterpret_cast<const uint8_t*>(this->imu.get_gyro_euler_angles()), 12);	
+    // ax,ay,az,gx,gy,gz,mx,my,mz,temp,qx,qy,qz,qw
+    std::memcpy(&this->get_payload_buffer()[4], 
+                &this->tmy[TMY_PARAM_IMU_RAW_ACCEL_X_B0], 14*4);
 
-	this->send(4 + (10*4) + (3*4) + (3*4) );
+	this->send(4 + (14*4) );
 }
 
 
@@ -458,15 +531,15 @@ void application::send_motion_control_report()
 	this->get_payload_buffer()[1] = 0; // estado
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
-    std::memcpy(&this->get_payload_buffer()[4], &this->tmy[TMY_PARAM_TACHO1_SPEED_B0], 7*4);
-	this->send(4 + (7*4) );
+    std::memcpy(&this->get_payload_buffer()[4], &this->tmy[TMY_PARAM_TACHO1_SPEED_B0], 11*4);
+	this->send(4 + (11*4) );
 }
 
 void application::send_gps_report()
 {
     //printf("%03d send_gps_report\n\r",this->periodic_task_counter);
 	this->get_payload_buffer()[0] = REPORT_GPS_STATE;
-    this->get_payload_buffer()[1] = 0; // estado
+    this->get_payload_buffer()[1] = this->gps.is_valid();
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
 

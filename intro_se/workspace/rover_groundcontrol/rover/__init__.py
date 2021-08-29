@@ -106,6 +106,12 @@ class RoverClient(Connection):
     TMY_PARAM_TACHO3_SPEED = 0
     TMY_PARAM_TACHO4_SPEED = 0
 
+    # Cuentas en tacómetros 
+    TMY_PARAM_TACHO1_COUNT = 0
+    TMY_PARAM_TACHO2_COUNT = 0
+    TMY_PARAM_TACHO3_COUNT = 0
+    TMY_PARAM_TACHO4_COUNT = 0
+
     # Control de motores (velocidad para cada par)
     TMY_PARAM_MOTOR_A_THROTTLE = 0
     TMY_PARAM_MOTOR_B_THROTTLE = 0
@@ -256,17 +262,22 @@ class RoverClient(Connection):
         """
         self.__report_counters["MOTION_CONTROL_STATE"]+=1
 
-        parsed = struct.unpack('<ccc4f2h2f', bytearray(payload))
+        parsed = struct.unpack('<ccc4f4I2h2f', bytearray(payload))
         self.TMY_PARAM_TACHO1_SPEED = parsed[3]
         self.TMY_PARAM_TACHO2_SPEED = parsed[4]
         self.TMY_PARAM_TACHO3_SPEED = parsed[5]
         self.TMY_PARAM_TACHO4_SPEED = parsed[6]
 
-        self.TMY_PARAM_MOTOR_A_THROTTLE = parsed[7]
-        self.TMY_PARAM_MOTOR_B_THROTTLE = parsed[8]
+        self.TMY_PARAM_TACHO1_COUNT = parsed[7]
+        self.TMY_PARAM_TACHO2_COUNT = parsed[8]
+        self.TMY_PARAM_TACHO3_COUNT = parsed[9]
+        self.TMY_PARAM_TACHO4_COUNT = parsed[10]
 
-        self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[9]
-        self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[10]
+        self.TMY_PARAM_MOTOR_A_THROTTLE = parsed[11]
+        self.TMY_PARAM_MOTOR_B_THROTTLE = parsed[12]
+
+        self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[13]
+        self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[14]
 
     def __on_gps_report(self,payload):
         """ Procesar un reporte de GPS.
@@ -310,6 +321,11 @@ class RoverClient(Connection):
         print("TACHO2_SPEED: {:.3f}".format(self.TMY_PARAM_TACHO2_SPEED))
         print("TACHO3_SPEED: {:.3f}".format(self.TMY_PARAM_TACHO3_SPEED))
         print("TACHO4_SPEED: {:.3f}".format(self.TMY_PARAM_TACHO4_SPEED))
+
+        print("TACHO1_COUNT: {:.3f}".format(self.TMY_PARAM_TACHO1_COUNT))
+        print("TACHO2_COUNT: {:.3f}".format(self.TMY_PARAM_TACHO2_COUNT))
+        print("TACHO3_COUNT: {:.3f}".format(self.TMY_PARAM_TACHO3_COUNT))
+        print("TACHO4_COUNT: {:.3f}".format(self.TMY_PARAM_TACHO4_COUNT))
 
         print("MOTOR_A_THROTTLE: {:}".format(self.TMY_PARAM_MOTOR_A_THROTTLE))
         print("MOTOR_B_THROTTLE: {:}".format(self.TMY_PARAM_MOTOR_B_THROTTLE))

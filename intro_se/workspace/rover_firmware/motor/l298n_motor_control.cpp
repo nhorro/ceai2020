@@ -15,17 +15,16 @@ l298_motor_control::l298_motor_control(PinName ena, PinName in1, PinName in2, Pi
 
 void l298_motor_control::setup()
 {    
-
+    // Para configuraciones más específicas en el futuro.
 }
 
-void l298_motor_control::set_motor_speeds(int16_t speeds[2], uint8_t mask )
+void l298_motor_control::set_motor_throttles(int16_t throtttles[2], uint8_t mask )
 {
  	for(int i=0;i<2;i++)
  	{
 	    if ( mask & (motor_control_flags::motor_a<<i) ) 
 	    {	    	
-			this->motors[i].setpoint_speed = float(speeds[i])/MAXIMUM_SPEED;
-			this->write_speed(i,this->motors[i].setpoint_speed);
+			this->write_throttle(i,float(throtttles[i])/MAXIMUM_THROTTLE);
 	    }        
 	}
 }
@@ -38,10 +37,10 @@ void l298_motor_control::update()
     }
 }
 
-void l298_motor_control::write_speed(int motor_idx,float speed)
+void l298_motor_control::write_throttle(int motor_idx,float throttle)
 {
     /* El sentido se controla con los pines 1 y 2. */
-    if ( this->motors[motor_idx].setpoint_speed >= 0 ) 
+    if ( throttle >= 0 ) 
     {
         this->motors[motor_idx].in1_pin = 1;
         this->motors[motor_idx].in2_pin = 0;
@@ -53,5 +52,5 @@ void l298_motor_control::write_speed(int motor_idx,float speed)
     } 
 
     /* La intensidad con el ancho de pulso del pin ENA. */
-    this->motors[motor_idx].ena_pin.write( abs(speed) );  
+    this->motors[motor_idx].ena_pin.write( abs(throttle) );  
 }

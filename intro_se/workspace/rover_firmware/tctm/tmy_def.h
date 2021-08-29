@@ -21,9 +21,10 @@ enum tmy_index_e {
     /** Código de último comando ejecutado. */
 	TMY_PARAM_LAST_OPCODE			= 2,
 
-    /** Código de último error/status. */
+    /** Código de último error. */
 	TMY_PARAM_LAST_ERROR			= 3,
 
+    /** Palabra de estado del sistema. */
 	TMY_PARAM_STATUS				= 4,
 
 	// IMU
@@ -85,6 +86,18 @@ enum tmy_index_e {
 
     // Velocidad medida en tacómetro 4 (RPM)
     TMY_PARAM_TACHO4_SPEED_B0,TMY_PARAM_TACHO4_SPEED_B1,TMY_PARAM_TACHO4_SPEED_B2,TMY_PARAM_TACHO4_SPEED_B3,
+
+    // Cuentas en tacómetro 1
+    TMY_PARAM_TACHO1_COUNT_B0,TMY_PARAM_TACHO1_COUNT_B1,TMY_PARAM_TACHO1_COUNT_B2,TMY_PARAM_TACHO1_COUNT_B3,
+
+    // Cuentas en tacómetro 2
+    TMY_PARAM_TACHO2_COUNT_B0,TMY_PARAM_TACHO2_COUNT_B1,TMY_PARAM_TACHO2_COUNT_B2,TMY_PARAM_TACHO2_COUNT_B3,
+
+    // Cuentas en tacómetro 3
+    TMY_PARAM_TACHO3_COUNT_B0,TMY_PARAM_TACHO3_COUNT_B1,TMY_PARAM_TACHO3_COUNT_B2,TMY_PARAM_TACHO3_COUNT_B3,
+
+    // Cuentas en tacómetro 4
+    TMY_PARAM_TACHO4_COUNT_B0,TMY_PARAM_TACHO4_COUNT_B1,TMY_PARAM_TACHO4_COUNT_B2,TMY_PARAM_TACHO4_COUNT_B3,
 
     // Control de motores (velocidad para cada par)
     TMY_PARAM_MOTOR_A_THROTTLE_B0, TMY_PARAM_MOTOR_A_THROTTLE_B1,

@@ -9,15 +9,15 @@
 #include "tctm/tmy_def.h"		// Definición de variables de telemetría
 #include "tctm/report_def.h"	// Definición de reportes
 
-// FIXME
 #include "motor/l298n_motor_control.h"
 #include "tachometer/lm393_tachometer.h"
-//#include "ahrs/mpu9250_ahrs.h"
+#include "mpu9250_imu/mpu9250.h"
+#include "mpu9250_imu/madwick.h"
+#include "gps/ublox_neo6m_gps.h"
+
 
 #include "config.h"
 
-// Cantidad de tareas periódicas
-#define N_PERIODIC_TASKS 9
 
 /** Clase aplicación. 
  * Notar que se heredan el codificador y decodificador de paquetes, es decir, 
@@ -135,7 +135,19 @@ private:
 	};
 
     /** Tabla con tareas de la aplicación. */
-	periodic_task_entry periodic_tasks[N_PERIODIC_TASKS];    
+    enum periodic_task_e{
+        task_read_telecommands = 0,
+        task_read_imu,
+        task_read_tachometers,
+        task_read_gps,
+        task_write_motors,
+        task_send_general_report,
+        task_send_motion_report,
+        task_send_imu_report,
+        task_send_gps_report,
+        last_task
+    };
+	periodic_task_entry periodic_tasks[last_task];    
 
     /** Contador global del ticker. */
     uint32_t periodic_task_counter;
@@ -166,7 +178,7 @@ private:
 	/* Comandos :: Específicos de la aplicación */
 
     /** Potencia de motores */
-	application::error_code set_motor_throttle(const uint8_t* payload, uint8_t n);
+	application::error_code set_motor_throttles(const uint8_t* payload, uint8_t n);
 
     /* Velocidad de motores */
     application::error_code set_motor_speed_setpoints(const uint8_t* payload, uint8_t n);
@@ -199,7 +211,7 @@ private:
     /* IMU */
 
     /* Motor con L298 */
-	//l298_motor_control motor_ctl;
+	l298_motor_control motor_ctl;
 	int16_t throttles[2] = { 0, 0 };
     float speed_setpoints[2] = { 0.0f, 0.0f };
 
@@ -207,20 +219,24 @@ private:
     void write_motors();
 
     /* Tacómetros */
-    //lm393_tachometer tacho[4];
-    float tacho_readings[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; // FIXME pasar a 0
+    lm393_tachometer tacho[4];
+    float tacho_readings[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; 
+    uint32_t tacho_counters[4] = { 0, 0, 0, 0 }; 
 
     /** Actualizar lecturas de tacómetros. */
     void read_tachometers();
 
     /* IMU MPU9250 */
-    float imu_state[10];
-	//mpu9250 imu;
+    //float imu_state[10];
+	
+    mpu9250 imu;
+    madwick_sensor_fusion sensor_fusion;
     
     /** Actualizar lecturas de IMU. */
     void read_imu();	
 
     /* GPS */
+    ublox_neo6m_gps gps;
 
     /* Leer GPS (UART) */
     void read_gps();

@@ -3,6 +3,11 @@
 
 #include <mbed.h>
 
+#define DEFAULT_TACHO1_PIN PE_7
+#define DEFAULT_TACHO2_PIN PE_8
+#define DEFAULT_TACHO3_PIN PG_9
+#define DEFAULT_TACHO4_PIN PG_14
+
 class lm393_tachometer {
 public:
     /** Constructor por defecto.
@@ -16,7 +21,7 @@ public:
     ~lm393_tachometer() = default;
 
     /** Configuración. */
-    void setup();
+    void setup(bool debug_mode);
 
     /** Obtener RPM */
     inline float get_rpm() const { return this->rpm; }
@@ -24,15 +29,22 @@ public:
     /** Obtener total de ticks */
     inline float get_total_tick_count() const { return this->counter; }
 
+    /** Debugging con led */
+    void debug();
+
 private:        
     Timer timer;
     InterruptIn irq;
-    int counter;
-    float dt;
-    float rpm;
-    float encoder_k;
+    //DigitalIn irq;
+    volatile uint32_t counter;
+    volatile float dt;
+    volatile float rpm;
+    const float encoder_k;
+    
+    bool debug_mode;
+    DigitalOut debug_led;
 
-    void tick();
+    void tick();    
 };
 
 #endif

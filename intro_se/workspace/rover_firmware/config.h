@@ -42,7 +42,7 @@
 #define READ_IMU_FREQ	 	 10.0f
 
 /* 1.3 Frecuencia para lectura de tacómetros (Hz) */
-#define READ_TACHOMETERS_FREQ	 	 10.0f
+#define READ_TACHOMETERS_FREQ	 	 50.0f
 
 /* 1.4 Frecuencia para lectura de GPS (Hz) */
 #define READ_GPS_FREQ	 	 2.0f

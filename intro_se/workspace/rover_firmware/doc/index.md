@@ -1,14 +1,14 @@
-# Firmware para prototipo de vehículo de operación remota (rover)
+# Firmware para prototipo de vehículo de operación remota
 
-Versión del documento: 0.1.0
+Versión del documento: 0.2.0
 
 [TOC]
 
-## Descripción de la propuesta
+## Descripción de este trabajo
 
-Se propone como trabajo final para el curso de Introducción a Sistemas Embebidos de la carrera de Especialización en Inteligencia Artificial la implementación en la placa Nucleo F767ZI del firmware de la placa de control de un vehículo de operación remota (generalmente llamado *rover* por sus siglas en inglés: *Remotely Operated Vehicle for Emplacement & Reconnaissance*).
+Se realizó como trabajo final para el curso de Introducción a Sistemas Embebidos de la carrera de Especialización en Inteligencia Artificial la implementación en la placa Nucleo F767ZI del firmware de la placa de control de un vehículo de operación remota (generalmente llamado *rover* por sus siglas en inglés: *Remotely Operated Vehicle for Emplacement & Reconnaissance*).
 
-### Marco de la propuesta
+### Contexto
 
 El presente trabajo es parte de un proyecto más grande en el que la placa de control del vehículo es  uno de los subsistemas a desarrollar.  El objetivo final del proyecto es contar con una plataforma para:
 
@@ -27,7 +27,7 @@ En el siguiente diagrama se muestra el sistema completo, para el que se se ha re
 
 Se utiliza una arquitectura típica para este tipo de sistemas, en las que como mínimo se dispone del vehículo y un software para operarlo (ground station). 
 
-### Rover (versión 1.0)
+### ROVER (versión 1.0)
 
 Se utiliza el término **plataforma** para referirse al vehículo físico y su placa de control y **carga útil** a la computadora y otros sensores e instrumentos  adicionales que permitan al vehículo cumplir una misión (obtener mediciones, manipular un brazo u otro mecanismo, explorar de forma autónoma, transmitir video, etc). 
 
@@ -43,7 +43,7 @@ Plataforma:
 
 - 1x microcontrolador (placa [NUCLEO-F767ZI](https://www.st.com/en/evaluation-tools/nucleo-f767zi.html)) que implementa el lazo de control del vehículo.
 - Sensores:
-  - [4x tacómetros ópticos LM393](https://candy-ho.com/producto/sensor-optico-horquilla-velocidad-tacometro-lm393-arduino/).
+  - [4x tacómetros utilizando encoders ópticos LM393](https://candy-ho.com/producto/sensor-optico-horquilla-velocidad-tacometro-lm393-arduino/).
   - [1x MPU9250](https://articulo.mercadolibre.com.ar/MLA-618704275-mpu-9250-mpu9250-acelerometro-magnetometro-giroscopo-arduino-_JM#position=2&search_layout=grid&type=item&tracking_id=5be31c5c-a195-44a5-9254-faf2f07b738c).
   - [1x GPS Neo6M](https://articulo.mercadolibre.com.ar/MLA-684956175-neo6m-gy-gps6mv2-gps-apm25-neo-6m-modulo-antena-a0129-_JM#position=2&search_layout=grid&type=item&tracking_id=110a4426-ee0b-4a96-8a97-0db8e81b4a8f).
 - Actuadores:
@@ -65,7 +65,7 @@ Nota: para el chasis se utiliza el [kit 4WD](https://candy-ho.com/producto/chasi
 
 El código está organizado siguiendo la filosofía de ROS de separar las aplicaciones y conectarlas en una red TCP/IP donde se publican y se suscriben a datos de interés mediante un sistema de mensajería. Esto permite construir aplicaciones complejas aprovechando la extensa cantidad de componentes disponibles para todo tipo de tareas: planificación de trayectoria, corrección de distorsión de cámara, fusión de datos, IA, etc. además de facilitar la integración prácticamente con cualquier otro SW existente.
 
-Puede hacerse una primera división del software entre el firmware y el código de aplicación. Para el trabajo final de este curso **únicamente se desarrollará el firmware**.
+Puede hacerse una primera división del software entre el firmware y el código de aplicación. Para el trabajo final de este curso **únicamente se desarrolló el firmware**.
 
 - Código de Aplicación (ARM o x86): desarrollado en Python o C++ usando ROS para ejecutarse en Ubuntu en ARM o x86, dependiendo de la exigencia de la tarea. Organizado como servicios/aplicaciones separadas:
   - **Bridge con ROS (roverbridge)**: comunicación con firmware por UART. Envío de comandos y recepción de telemetría usando un protocolo sencillo similar a MAVLINK. Publicación de telemetría en los formatos de ROS (posición de cuaternión de orientación del vehículo, variables de estado, contadores, etc.).
@@ -85,9 +85,9 @@ Puede hacerse una primera división del software entre el firmware y el código 
 
 El siguiente diagrama muestra los componentes del sistema 
 
-![Diagrama de bloques](rover-fiuba.png)
+![Diagrama de bloques](./assets/rover-fiuba-blocks.png)
 
-- La lectura del sensor IMU se implementará por I2C o SPI (los dos modos de comunicación soportados por el sensor).
+- La lectura del sensor IMU se implementará por I2C.
 - La lectura del GPS se realizará por UART.
 - Los tacómetros se conectarán a pines de entrada digitales. Nota: se utilizarán capacitores para reducir el ruido en la lectura (no se muestran en el diagrama)
 - El control de los motores se realizará por salidas pulsadas de ancho modulado (PWM).
@@ -100,14 +100,14 @@ Sección en preparación para futura consulta de asignación de pines. Se comple
 
 #### NUCLEO - L298N
 
-| Pin L298N | Pin Nucleo |
-| --------- | ---------- |
-| ENA       | D0         |
-| IN1       | D1         |
-| IN2       | D2         |
-| IN3       | D3         |
-| IN4       | D4         |
-| ENB       | D5         |
+| Pin L298N | Pin Nucleo | Color de cable |
+| --------- | ---------- | -------------- |
+| ENA       | PB_11      | Blanco         |
+| IN1       | PB_10      | Verde          |
+| IN2       | PE_15      | Blanco         |
+| IN3       | PE_14      | Verde.         |
+| IN4       | PE_12      | Blanco         |
+| ENB       | PE_10      | Verde          |
 
 #### L298N - Motores
 
@@ -132,32 +132,34 @@ Nota: con el vehículo apuntando hacia adelante: LF=Left/Front, RB=Right/Back,et
 
 | Pin NUCLEO | Pin MPU9250 |
 | ---------- | ----------- |
-| VCC        | 3.3V        |
+| 3.3V       | 3.3V        |
 | GND        | GND         |
 | SDA (?)    | SDA         |
 | SCL (?)    | SCL         |
 
 #### NUCLEO - GPS
 
-| Pin NUCLEO | Pin GPS |
-| ---------- | ------- |
-| GND        | GND     |
-| RX (?)     | Tx      |
-| TX (?)     | Rx      |
+| Pin NUCLEO | Pin GPS | Cable (color) |
+| ---------- | ------- | ------------- |
+| 5V         | VCC     | Rojo          |
+| GND        | GND     | Gris          |
+| Rx (PD_6)  | Tx      | Amarillo      |
+| Tx (PD_5)  | Rx      | Fucsia        |
 
-#### NUCLEO - LM393
+#### NUCLEO - Tacómetros LM393
 
-| Pin Nucleo | Pin LM393 |
-| ---------- | --------- |
-| GND        | GND       |
-| ??         | LF        |
-| ??         | RF        |
-| ??         | LB        |
-| ??         | RB        |
+| Pin Nucleo | Pin LM393        |
+| ---------- | ---------------- |
+| GND        | GND              |
+| 3.3V       | VCC              |
+| PE_7       | DO (Tacómetro 1) |
+| PE_8       | DO (Tacómetro 2) |
+| PG_9       | DO (Tacómetro 3) |
+| PG_14      | DO (Tacómetro 4) |
 
 ## Modelado de SW
 
-- Esta sección se completará más avanzado el proyecto. 
+
 
 ### Diagrama de clases
 
@@ -187,7 +189,7 @@ Se definen dos tipos de paquetes:
 
 El siguiente diagrama muestra la máquina de estados que se utiliza para reconocer el protocolo.
 
-![Máquina de estados del protocolo de comunicación](rover-serial-protocol.png)
+![Máquina de estados del protocolo de comunicación](./assets/rover-serial-protocol.png)
 
 Secuencia nominal:
 
@@ -222,14 +224,14 @@ A modo de ejemplo, se describen en esta sección los comandos y reportes a imple
 
 ### Comandos
 
-| Opcode | Mnemónico           | Descripción                                                  | Parámetros              |
-| ------ | ------------------- | ------------------------------------------------------------ | ----------------------- |
-| 0x00   | REQUEST_TMY         | Solicitar telemetría. Se generará un reporte general de telemetría. | Ninguno.                |
-| 0x01   | LED_ON              | Encender led de prueba.                                      | Ninguno.                |
-| 0x02   | LED_OFF             | Apagar led de prueba.                                        | Ninguno.                |
-| 0x03   | UPDATE_MOTOR_SPEEDS | Actualizar velocidades de los motores.                       | Ver detalles más abajo. |
+| Opcode | Mnemónico              | Descripción                                                  | Parámetros              |
+| ------ | ---------------------- | ------------------------------------------------------------ | ----------------------- |
+| 0x00   | REQUEST_TMY            | Solicitar telemetría. Se generará un reporte general de telemetría. | Ninguno.                |
+| 0x01   | LED_ON                 | Encender led de prueba.                                      | Ninguno.                |
+| 0x02   | LED_OFF                | Apagar led de prueba.                                        | Ninguno.                |
+| 0x03   | UPDATE_MOTOR_THROTTLES | Actualizar potencia de los motores (manual).                 | Ver detalles más abajo. |
 
-#### 0x03 UPDATE_MOTOR_SPEEDS
+#### 0x03 UPDATE_MOTOR_THROTTLES
 
 Actualizar las velocidades de los motores. Cada velocidad se indica como un int16 entre -255 y 255.
 
@@ -283,4 +285,3 @@ Este reporte se genera automáticamente como resultado de la ejecución de un co
   - [MBed API references and tutorials - I2C](https://os.mbed.com/docs/mbed-os/v6.12/apis/i2c.html)
   - [MBed API references and tutorials - BufferedSerial](https://os.mbed.com/docs/mbed-os/v6.12/apis/serial-uart-apis.html)
   - [MBed API references and tutorials - PwmOut](https://os.mbed.com/docs/mbed-os/v6.12/apis/pwmout.html)
-  - [MBed API references and tutorials - CRC](https://os.mbed.com/docs/mbed-os/v6.12/apis/mbedcrc.html)
