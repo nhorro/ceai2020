@@ -9,12 +9,11 @@
 #include "tctm/tmy_def.h"		// Definición de variables de telemetría
 #include "tctm/report_def.h"	// Definición de reportes
 
-#include "motor/l298n_motor_control.h"
-#include "tachometer/lm393_tachometer.h"
-#include "mpu9250_imu/mpu9250.h"
-#include "mpu9250_imu/madwick.h"
-#include "gps/ublox_neo6m_gps.h"
-
+#include "actuators/motor/l298n_motor_control.h"
+#include "sensors/tachometer/lm393_tachometer.h"
+#include "sensors/mpu9250_imu/mpu9250.h"
+#include "sensors/mpu9250_imu/madwick.h"
+#include "sensors/gps/ublox_neo6m_gps.h"
 
 #include "config.h"
 
@@ -36,10 +35,10 @@ public:
 
     /** Inicialización. Incluye configuración de periféricos, tests iniciales, etc. */
 	void setup();
-
+    
 private:
     /* Tabla de telemetrías */
-	uint8_t tmy[TMY_PARAM_LAST] __attribute__((aligned (4)));	
+	uint8_t tmy[TMY_PARAM_LAST]; // __attribute__((aligned (4)));	
 	using opcode_callback = application::error_code(application::*)(const uint8_t* payload, uint8_t n);
 
     /** Telecomandos */
@@ -206,22 +205,40 @@ private:
     /* Bloques funcionales */
 
     /* Led de prueba */
-    DigitalOut led;
+    DigitalOut leds[3];
+
+    enum led_id_e {
+        led1 = 1,
+        led2 = 2,
+        led3 = 4,
+    };
+
+    struct led_sequence_entry_t {        
+        enum event_type_e {
+            wait=0,
+            leds_on,
+            leds_off,
+            end
+        } action;
+        uint32_t param;
+    };
+
+    void play_led_sequence(const led_sequence_entry_t seq[]);
 
     /* IMU */
 
     /* Motor con L298 */
 	l298_motor_control motor_ctl;
-	int16_t throttles[2] = { 0, 0 };
-    float speed_setpoints[2] = { 0.0f, 0.0f };
+	int16_t throttles[2];
+    float speed_setpoints[2];
 
     /* Escribir motores */    
     void write_motors();
 
     /* Tacómetros */
     lm393_tachometer tacho[4];
-    float tacho_readings[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; 
-    uint32_t tacho_counters[4] = { 0, 0, 0, 0 }; 
+    float tacho_readings[4]; 
+    uint32_t tacho_counters[4]; 
 
     /** Actualizar lecturas de tacómetros. */
     void read_tachometers();
@@ -236,7 +253,7 @@ private:
     void read_imu();	
 
     /* GPS */
-    ublox_neo6m_gps gps;
+    //ublox_neo6m_gps gps;
 
     /* Leer GPS (UART) */
     void read_gps();

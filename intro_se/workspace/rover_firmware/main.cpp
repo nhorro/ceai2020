@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "application.h"
+#include "mbed_thread.h"
 
 int main()
 {
@@ -11,4 +12,10 @@ int main()
 
     /* Configuración */
     app.setup();
+    
+    /* No debería ser necesario */
+    for(;;)
+    {
+        thread_sleep_for(100);
+    }
 }

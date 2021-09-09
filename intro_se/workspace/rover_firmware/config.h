@@ -6,7 +6,7 @@
 #define CONFIG_H
 
 /* Puerto serie */
-#define APP_SERIAL_IF_BAUDRATE	115200
+#define APP_SERIAL_IF_BAUDRATE	9600
 #define APP_SERIAL_IF_BUFSIZE	32
 
 /* Tamaño de mensajes y timeout del protocolo serie */
@@ -54,7 +54,7 @@
 #define GENERAL_TMY_REPORT_FREQ	 	 3.0f
 
 /* 4.2 Frecuencia de publicación de reportes de motores y tacómetros (Hz) */
-#define MOTION_REPORT_FREQ 		 	 10.0f
+#define MOTION_REPORT_FREQ 		 	 4.0f
 
 /* 4.3 Frecuencia de publicación de reportes de IMU (Hz) */
 #define IMU_REPORT_FREQ 		 	 1.0f
@@ -62,9 +62,24 @@
 /* 4.4 Frecuencia de publicación de reportes de GPS (Hz) */
 #define GPS_REPORT_FREQ 		 	 1.0f
 
-
 /* Configuración de dispositivos */
 
 #define WHEEL_ENCODER_N_TICKS 32
+
+
+/* Definiciones de harness */
+
+/* L298N */
+
+/* IMU - MPU9250 */
+
+/* GPS */
+
+/* Tacómetros */
+#define DEFAULT_TACHO1_PIN PE_7
+#define DEFAULT_TACHO2_PIN PE_8
+#define DEFAULT_TACHO3_PIN PG_9
+#define DEFAULT_TACHO4_PIN PG_14
+
 
 #endif

@@ -1,4 +1,5 @@
 #include "application.h"
+#include "mbed_thread.h"
 
 application::application() :
 	opcodes
@@ -115,17 +116,22 @@ application::application() :
                 &application::send_gps_report
             }       
 		}
-    , periodic_task_counter(0)
-    , task_ticker_queue(mbed_event_queue())
-    , serial_port(USBTX, USBRX)
-    , led(LED1)
-    , motor_ctl( DEFAULT_L298_PIN_ENA, DEFAULT_L298_PIN_IN1, DEFAULT_L298_PIN_IN2, 
-                 DEFAULT_L298_PIN_ENB, DEFAULT_L298_PIN_IN3, DEFAULT_L298_PIN_IN4)    
+    , periodic_task_counter{0}
+    , task_ticker_queue{ mbed_event_queue() }
+    , serial_port{USBTX, USBRX}
+    , leds{LED1,LED2,LED3}
+    , motor_ctl{ DEFAULT_L298_PIN_ENA, DEFAULT_L298_PIN_IN1, DEFAULT_L298_PIN_IN2, 
+                 DEFAULT_L298_PIN_ENB, DEFAULT_L298_PIN_IN3, DEFAULT_L298_PIN_IN4 }
+    , throttles{ 0, 0 }
+    , speed_setpoints{ 0.0f, 0.0f }        
     , tacho{ 
         { DEFAULT_TACHO1_PIN, WHEEL_ENCODER_N_TICKS },
         { DEFAULT_TACHO2_PIN, WHEEL_ENCODER_N_TICKS },
         { DEFAULT_TACHO3_PIN, WHEEL_ENCODER_N_TICKS },
-        { DEFAULT_TACHO4_PIN, WHEEL_ENCODER_N_TICKS } }
+        { DEFAULT_TACHO4_PIN, WHEEL_ENCODER_N_TICKS } 
+    }
+    , tacho_readings { 0.0f, 0.0f, 0.0f, 0.0f }
+    , tacho_counters { 0, 0, 0, 0 }
     // BEGIN  BUG
     /* La siguiente línea que instancia la clase IMU es la causante del error 
        que se muestra a continuación:      
@@ -169,7 +175,7 @@ application::application() :
     Pero ejecutándolo en una aplicación limpia funciona. 
     Cómo se pued debuggear esto?
     Posibles causas:
-        - ¿Conflicto de pines? ¿Pero porqué segfault?
+        - ¿Conflicto de pines? ¿Pero porqué stackoverflow?
         - ¿Memoria? Pero no hay alocación dinámica, debería saltar en tiempo de ejecución.
         - ¿Superación de stack por variables locales? Se inicializan miembros de la clase, por lo 
           tanto no hay uso de stack.
@@ -177,18 +183,43 @@ application::application() :
     Nota: el error se puede repetir sin conectar ningún periférico, únicamente con USB. Por
     más que el I2C esté desconectado, no debería fallar.
     */
-    , imu(MPU9250_ADDRESS, AK8963_ADDRESS, I2C_SDA, I2C_SCL) // Comentar para evitar bug
+    //, imu{MPU9250_ADDRESS, AK8963_ADDRESS, I2C_SDA, I2C_SCL} // Comentar para evitar bug
     // END BUG
-    , gps(DEFAULT_GPS_PIN_TX, DEFAULT_GPS_PIN_RX)
-{
-    // Registro de tareas periódicas
-    this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
-    this->periodic_task_ticker.attach(
-        callback(this, &application::execute_periodic_tasks), 
-        1.0f / CONTROL_CYCLE_FREQ
-    );
-    this->task_ticker_queue->dispatch_forever();
+    //, gps{DEFAULT_GPS_PIN_TX, DEFAULT_GPS_PIN_RX}
+{      
 }
+
+
+
+void application::play_led_sequence(const led_sequence_entry_t seq[])
+{
+    for(int i=0;seq[i].action != led_sequence_entry_t::event_type_e::end; i++)
+    {
+        switch(seq[i].action)
+        {
+            case led_sequence_entry_t::event_type_e::leds_on: 
+            {
+                if(seq[i].param & led_id_e::led1) this->leds[0].write(true);
+                if(seq[i].param & led_id_e::led2) this->leds[1].write(true);
+                if(seq[i].param & led_id_e::led3) this->leds[2].write(true);
+            } break;
+
+            case led_sequence_entry_t::event_type_e::leds_off: 
+            {
+                if(seq[i].param & led_id_e::led1) this->leds[0].write(false);
+                if(seq[i].param & led_id_e::led2) this->leds[1].write(false);
+                if(seq[i].param & led_id_e::led3) this->leds[2].write(false);
+            } break;
+
+            case led_sequence_entry_t::event_type_e::wait: 
+            {
+                thread_sleep_for(seq[i].param);
+            } break;
+        }
+    }    
+}
+
+
 
 void application::read_telecommands()
 {       
@@ -208,30 +239,99 @@ void application::read_telecommands()
 
 void application::setup()
 {
-    // 1. Configurar conexión serie de aplicación + control en modo asincrónico.
-    this->serial_port.set_baud(APP_SERIAL_IF_BAUDRATE);
-    this->serial_port.set_format(
-        /* bits */ 8,
-        /* parity */ BufferedSerial::None,
-        /* stop bit */ 1
-    );
+    // 1. Configurar conexión serie de aplicación + control en modo asincrónico.    
+    //this->serial_port.set_baud(APP_SERIAL_IF_BAUDRATE);
+    //this->serial_port.set_format(
+    //        /* bits */ 8,
+    //  /* parity */ BufferedSerial::None,
+    //        /* stop bit */ 1
+    //);
 
-    // 2. Configurar L298N
-    this->motor_ctl.setup();
-
-    // 3. Configurar Tacómetros
-    this->tacho[0].setup(false);
+    this->tacho[0].setup(false);    
     this->tacho[1].setup(false);
     this->tacho[2].setup(false);
     this->tacho[3].setup(false);
 
+    // Registro de tareas periódicas
+    this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
+    this->periodic_task_ticker.attach(
+        callback(this, &application::execute_periodic_tasks), 
+        1.0f / CONTROL_CYCLE_FREQ
+    );  
+
+    this->task_ticker_queue->dispatch_forever();
+
+    // Secuencia de encendido
+    /*
+    using et = led_sequence_entry_t::event_type_e;
+    using status_leds = led_id_e;
+
+    static led_sequence_entry_t power_on_led_sequence[] = 
+    {
+        {  et::leds_off, 0x7 }, { et::wait, 500 },
+        {  et::leds_on,  0x7 }, { et::wait, 100 },
+        {  et::leds_off, 0x7 }, { et::wait, 100 }
+    };
+    this->play_led_sequence(power_on_led_sequence);     
+
+    // 2. Configurar L298N 
+    static led_sequence_entry_t motors_on_led_sequence[] = 
+    {
+        {  et::leds_off, 0x7 }, { et::wait, 500 },
+        {  et::leds_on,  0x6 }, { et::wait, 100 },
+        {  et::leds_off, 0x7 }, { et::wait, 100 }
+    };
+    this->play_led_sequence(motors_on_led_sequence);
+    
+
+    // 3. Configurar Tacómetros
+    static led_sequence_entry_t tachos_on_led_sequence[] = 
+     {
+        {  et::leds_off, 0x7 }, { et::wait, 500 },
+        {  et::leds_on,  0x6 }, { et::wait, 100 },
+        {  et::leds_off, 0x7 }, { et::wait, 100 }
+    };
+    this->play_led_sequence(tachos_on_led_sequence);
+
+    this->tacho[0].setup(false);    
+    this->tacho[1].setup(false);
+    this->tacho[2].setup(false);
+    this->tacho[3].setup(false);
+    
     // 4. Configurat IMU
+    static led_sequence_entry_t imu_on_led_sequence[] = 
+     {
+        {  et::leds_off, 0x7 }, { et::wait, 500 },
+        {  et::leds_on,  0x6 }, { et::wait, 100 },
+        {  et::leds_off, 0x7 }, { et::wait, 100 }
+    };
+    this->play_led_sequence(imu_on_led_sequence);
+
     //this->imu.setup();
     
     // 5. Configurar GPS
-    this->gps.setup();
-}
+    static led_sequence_entry_t gps_on_led_sequence[] = 
+    {
+        {  et::leds_off, 0x7 }, { et::wait, 500 },
+        {  et::leds_on,  0x6 }, { et::wait, 100 },
+        {  et::leds_off, 0x7 }, { et::wait, 100 }
+    };
+    this->play_led_sequence(gps_on_led_sequence);
+    
 
+    static led_sequence_entry_t successful_boot_seq[] = 
+    {
+        {  et::leds_off, 0x7 }, { et::wait, 100 },
+        {  et::leds_on,  0x7 }, { et::wait, 200 },
+        {  et::leds_off, 0x7 }, { et::wait, 200 },
+        {  et::leds_on,  0x7 }, { et::wait, 200 },
+        {  et::leds_off, 0x7 }, { et::wait, 200 },
+        {  et::leds_on,  0x7 }, { et::wait, 200 },
+        {  et::leds_off, 0x7 }, { et::wait, 200 }
+    };
+    this->play_led_sequence(successful_boot_seq);
+    */
+}
 
 void application::handle_packet(const uint8_t* payload, uint8_t n)
 {
@@ -291,9 +391,11 @@ void application::handle_connection_lost()
 	this->throttles[0] = 0;
 	this->throttles[1] = 0;
     
+    /*
 	this->motor_ctl.set_motor_throttles(this->throttles, 
     		l298_motor_control::motor_control_flags::motor_a|
 	   	    l298_motor_control::motor_control_flags::motor_b );
+    */               
     
 }
 
@@ -313,7 +415,7 @@ void application::execute_periodic_tasks()
         // Esto se usa como indicador de que el SW está en ejecución.
         if(this->tmy[TMY_PARAM_ACCEPTED_PACKETS]==0)
         {
-            this->led.write(!this->led.read());
+            this->leds[0].write(!this->leds[0].read());
         }	
         this->task_ticker_queue->call(callback(this,&application::start_control_cycle));
     }
@@ -362,13 +464,13 @@ application::error_code application::request_tmy(const uint8_t* payload, uint8_t
 
 application::error_code application::led_on(const uint8_t* payload, uint8_t n)
 {
-    this->led.write(true);
+    this->leds[0].write(true);
 	return error_code::success;
 }
 
 application::error_code application::led_off(const uint8_t* payload, uint8_t n)
 {
-    this->led.write(false);
+    this->leds[0].write(false);
 	return error_code::success;
 }
 
@@ -453,15 +555,15 @@ void application::read_tachometers()
     //this->tacho[0].debug();
 
     // Velocidad medida en tacómetro 1 (RPM)
-    this->tacho_readings[0]+=0.1f;
-    this->tacho_readings[1]+=0.2f;
-    this->tacho_readings[2]+=0.3f;
-    this->tacho_readings[3]+=0.4f;
+    //this->tacho_readings[0]+=0.1f;
+    //this->tacho_readings[1]+=0.2f;
+    //this->tacho_readings[2]+=0.3f;
+    //this->tacho_readings[3]+=0.4f;
 
-    //this->tacho_readings[0]=this->tacho[0].get_rpm();
-    //this->tacho_readings[1]=this->tacho[1].get_rpm();
-    //this->tacho_readings[2]=this->tacho[2].get_rpm();
-    //this->tacho_readings[3]=this->tacho[3].get_rpm();
+    this->tacho_readings[0]=this->tacho[0].get_rpm();
+    this->tacho_readings[1]=this->tacho[1].get_rpm();
+    this->tacho_readings[2]=this->tacho[2].get_rpm();
+    this->tacho_readings[3]=this->tacho[3].get_rpm();
 
     this->tacho_counters[0]=this->tacho[0].get_total_tick_count();
     this->tacho_counters[1]=this->tacho[1].get_total_tick_count();
@@ -473,8 +575,9 @@ void application::read_tachometers()
 
 void application::read_gps()
 {	    
-    this->gps.process();
+    //this->gps.process();
 
+    /*
     if(this->gps.is_valid())
     {
         this->gps_lon = this->gps.get_longitude();
@@ -482,7 +585,8 @@ void application::read_gps()
 
         std::memcpy(&this->tmy[TMY_PARAM_GPS_LONG_B0],&this->gps_lon,4);
         std::memcpy(&this->tmy[TMY_PARAM_GPS_LAT_B0],&this->gps_lat,4);
-    }     
+    } 
+    */    
 }
 
 void application::write_motors()
@@ -539,7 +643,7 @@ void application::send_gps_report()
 {
     //printf("%03d send_gps_report\n\r",this->periodic_task_counter);
 	this->get_payload_buffer()[0] = REPORT_GPS_STATE;
-    this->get_payload_buffer()[1] = this->gps.is_valid();
+    //this->get_payload_buffer()[1] = this->gps.is_valid();
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
 
@@ -548,4 +652,6 @@ void application::send_gps_report()
 
 	this->send(4 + (4*2)  );
 }
+
+
 

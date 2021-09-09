@@ -27,10 +27,7 @@ public:
     inline float get_rpm() const { return this->rpm; }
 
     /** Obtener total de ticks */
-    inline float get_total_tick_count() const { return this->counter; }
-
-    /** Debugging con led */
-    void debug();
+    inline uint32_t get_total_tick_count() const { return this->counter; }
 
 private:        
     Timer timer;

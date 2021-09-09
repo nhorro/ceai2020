@@ -159,11 +159,13 @@ Nota: con el vehículo apuntando hacia adelante: LF=Left/Front, RB=Right/Back,et
 
 ## Modelado de SW
 
+### Arquitectura estática
 
-
-### Diagrama de clases
+#### Diagrama de clases
 
 - Organización del código.
+
+### Arquitectura dinámica
 
 ### Protocolo de comunicación 
 
@@ -211,7 +213,9 @@ Error:
 
 ## Repositorio de código
 
-- Esta sección se completará más avanzado el proyecto. 
+Firmware: https://github.com/nhorro/ceai2020/tree/master/intro_se/workspace/rover_firmware
+
+Cliente python y cuaderno de banco de pruebas: https://github.com/nhorro/ceai2020/tree/master/intro_se/workspace/rover_groundcontrol
 
 ## Ejemplos
 

@@ -1,0 +1,13 @@
+{
+    "target_overrides": {
+        "*": {
+            "target.features_add"                       : ["BOOTLOADER", "STORAGE"],
+            "target.c_lib"                              : "std",
+            "platform.stdio-baud-rate"                  : 9600,
+            "target.printf_lib"                         : "minimal-printf",
+            "platform.minimal-printf-enable-floating-point": true,
+            "platform.minimal-printf-set-floating-point-max-decimals": 6,
+            "platform.minimal-printf-enable-64-bit": false
+        }  
+    }
+}

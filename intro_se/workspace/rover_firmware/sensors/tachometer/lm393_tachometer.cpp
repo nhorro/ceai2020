@@ -8,8 +8,7 @@ lm393_tachometer::lm393_tachometer(PinName pin,int n_ticks_per_rev):
         , encoder_k(1.0f/n_ticks_per_rev)
         , debug_mode(false)
         , debug_led(LED2)
-{
-
+{    
 }
 
 void lm393_tachometer::setup(bool debug_mode)
@@ -19,6 +18,7 @@ void lm393_tachometer::setup(bool debug_mode)
     //this->debug_mode = debug_mode;
     this->irq.enable_irq();
     //this->irq.rise(callback(this, &lm393_tachometer::tick));
+    this->timer.start();
 }
 
 void lm393_tachometer::tick() 
@@ -30,13 +30,7 @@ void lm393_tachometer::tick()
     
     //if ( this->debug_mode )
     //{
-    //this->debug_led.write(!this->debug_led.read());
+    this->debug_led.write(!this->debug_led.read());
     //}
     
-}
-
-void lm393_tachometer::debug()
-{    
-    this->debug_led.write(!this->debug_led.read());
-    this->rpm = 0.0f;    
 }
