@@ -12,7 +12,7 @@
 #include "actuators/motor/l298n_motor_control.h"
 #include "sensors/tachometer/lm393_tachometer.h"
 #include "sensors/mpu9250_imu/mpu9250.h"
-#include "sensors/mpu9250_imu/madwick.h"
+#include "estimation/madwick/madwick.h"
 #include "sensors/gps/ublox_neo6m_gps.h"
 
 #include "config.h"
@@ -246,7 +246,7 @@ private:
     /* IMU MPU9250 */
     //float imu_state[10];
 	
-    mpu9250 imu;
+    //mpu9250 imu;
     madwick_sensor_fusion sensor_fusion;
     
     /** Actualizar lecturas de IMU. */

@@ -26,7 +26,7 @@ float pid_controller::process( float dt, float setpoint, float pv )
     float iout = this->ki * this->integral;
 
     // 3. Componente derivativa
-    float derivative = (error - this->pre_error) / dt;
+    float derivative = (error - this->prev_error) / dt;
     float dout = this->kd * derivative;
 
     // Salida
