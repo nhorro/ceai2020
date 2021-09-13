@@ -46,15 +46,16 @@ def get_packet_payload(pkt):
                 if len(pkt) >= expected_packet_length:
                     for x in range(length):
                         tmp.append(pkt[HEADER_SIZE+x])
-                #else:
+                else:
                     #print("Tamaño de paquete inválido: ", length, ". Esperado: ", expected_packet_length)
                     #tmp = "Recibido: "
                     #for x in pkt:
                     #    tmp+="%02X " % x
                     #print(tmp)
-        #else:
-        #    #print("Header inválido. Recibido:", pkt) # TODO: log
-        #    pass
+                    pass
+        else:
+            #print("Header inválido. Recibido:", pkt) # TODO: log
+            pass
             
     return tmp
 

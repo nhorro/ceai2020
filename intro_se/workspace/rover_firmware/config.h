@@ -64,7 +64,7 @@
 
 /* Configuración de dispositivos */
 
-#define WHEEL_ENCODER_N_TICKS 32
+#define WHEEL_ENCODER_N_TICKS 20
 
 
 /* Definiciones de harness */
@@ -81,5 +81,18 @@
 #define DEFAULT_TACHO3_PIN PG_9
 #define DEFAULT_TACHO4_PIN PG_14
 
+/* Valor máximo de RPM que se considera válido. 
+   Valores superiores o negativos se consideran errores de lectura o de cálculo de RPM. */
+#define MAX_TACHO_VALID_RPM_READING 150.0f
+
+
+/* Valor máximo de la variable de salida del controlador PID de motores */
+#define DEFAULT_PID_MAX 1.0f
+#define DEFAULT_PID_MIN -1.0f
+
+#define DEFAULT_PID_KP 0.01f
+#define DEFAULT_PID_KD 0.0001f
+
+#define DEFAULT_PID_KI 0.0001f
 
 #endif

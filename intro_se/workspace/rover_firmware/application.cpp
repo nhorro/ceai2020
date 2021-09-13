@@ -1,4 +1,5 @@
 #include "application.h"
+#include "l298n_motor_control.h"
 #include "mbed_thread.h"
 
 application::application() :
@@ -13,7 +14,9 @@ application::application() :
 
 			// Control del rover
 			{ &application::set_motor_throttles, opcode_flags::default_flags },
-            { &application::set_motor_speed_setpoints, opcode_flags::default_flags }
+            { &application::set_motor_speed_setpoints, opcode_flags::default_flags },
+            { &application::config_pid_controller, opcode_flags::default_flags }
+
 
 			// END Comandos específicos de la aplicación
 		}
@@ -120,71 +123,25 @@ application::application() :
     , task_ticker_queue{ mbed_event_queue() }
     , serial_port{USBTX, USBRX}
     , leds{LED1,LED2,LED3}
+    /* Control de motores */
     , motor_ctl{ DEFAULT_L298_PIN_ENA, DEFAULT_L298_PIN_IN1, DEFAULT_L298_PIN_IN2, 
-                 DEFAULT_L298_PIN_ENB, DEFAULT_L298_PIN_IN3, DEFAULT_L298_PIN_IN4 }
-    , throttles{ 0, 0 }
-    , speed_setpoints{ 0.0f, 0.0f }        
+                 DEFAULT_L298_PIN_ENB, DEFAULT_L298_PIN_IN3, DEFAULT_L298_PIN_IN4,
+                 DEFAULT_PID_MAX, DEFAULT_PID_MIN, 
+                 DEFAULT_PID_KP, DEFAULT_PID_KD, DEFAULT_PID_KI }
+    , speed_setpoints{ 0.0f, 0.0f }       
+    /* Tacómetros */ 
     , tacho{ 
         { DEFAULT_TACHO1_PIN, WHEEL_ENCODER_N_TICKS },
         { DEFAULT_TACHO2_PIN, WHEEL_ENCODER_N_TICKS },
         { DEFAULT_TACHO3_PIN, WHEEL_ENCODER_N_TICKS },
         { DEFAULT_TACHO4_PIN, WHEEL_ENCODER_N_TICKS } 
     }
+    , tacho_filters { 3,3,3,3 }
     , tacho_readings { 0.0f, 0.0f, 0.0f, 0.0f }
     , tacho_counters { 0, 0, 0, 0 }
-    // BEGIN  BUG
-    /* La siguiente línea que instancia la clase IMU es la causante del error 
-       que se muestra a continuación:      
-    
-    ++ MbedOS Error Info ++
-    Error Status: 0x80020125 Code: 293 Module: 2
-    Error Message: CMSIS-RTOS error: Stack overflow
-    Location: 0x800D38F
-    Error Value: 0x1
-    Current Thread: main Id: 0x20005D98 Entry: 0x800CEA9 StackSize: 0x1000 StackMem: 0x200045E0 SP: 0x2007FF30 
-    For more info, visit: https://mbed.com/s/error?error=0x80020125&tgt=NUCLEO_F767ZI
-    -- MbedOS Error Info --
-
-    Esta línea lo único que hace es instanciar una clase mpu9250 (imu), que a su vez 
-    instancia una clase I2C.
-    El resto de las invocaciones a la instancia imu han sido comentadas en el código.
-
-    ¿Qué implica instanciar imu?
-
-    La clase imu, con excepción de i2c, sólo instancia tipos primitivos:
-
-    ~~~
-    mpu9250::mpu9250(uint8_t mpu_addr,uint8_t mag_addr, PinName sda, PinName scl):
-    // MbedOS usa addresses de 8bit (ver https://os.mbed.com/docs/mbed-os/v6.5/apis/i2c.html)
-    mpu_addr8(mpu_addr<<1), // uint8_t
-    mag_addr8(mag_addr<<1), // uint8_t
-    i2c(sda, scl), // <-- acá está el problema?
-    mpu_valid(false), // bool
-    mag_valid(false), // bool
-    total_readings(0), // uint32_t
-    mpu9250_readings_ok(0), // uint32_t
-    mpu9250_readings_failed(0), // uint32_t
-    ak8963_readings_ok(0),  // uint32_t
-    ak8963_readings_failed(0)   // uint32_t
-    {
-        // (no hay código)
-    }
-    ~~~
-
-    Entonces, el problema parece ser la instanciación de i2c(sda, scl).
-    Pero ejecutándolo en una aplicación limpia funciona. 
-    Cómo se pued debuggear esto?
-    Posibles causas:
-        - ¿Conflicto de pines? ¿Pero porqué stackoverflow?
-        - ¿Memoria? Pero no hay alocación dinámica, debería saltar en tiempo de ejecución.
-        - ¿Superación de stack por variables locales? Se inicializan miembros de la clase, por lo 
-          tanto no hay uso de stack.
-
-    Nota: el error se puede repetir sin conectar ningún periférico, únicamente con USB. Por
-    más que el I2C esté desconectado, no debería fallar.
-    */
-    //, imu{MPU9250_ADDRESS, AK8963_ADDRESS, I2C_SDA, I2C_SCL} // Comentar para evitar bug
-    // END BUG
+    /* IMU */
+    , imu{MPU9250_ADDRESS, AK8963_ADDRESS, I2C_SDA, I2C_SCL} 
+    /* GPS */
     //, gps{DEFAULT_GPS_PIN_TX, DEFAULT_GPS_PIN_RX}
 {      
 }
@@ -240,6 +197,8 @@ void application::read_telecommands()
 void application::setup()
 {
     // 1. Configurar conexión serie de aplicación + control en modo asincrónico.    
+    //    En MbedOS al parecer esto es ignorado, y vale el baudrate que se indica
+    //    En el JSON de configuración.
     //this->serial_port.set_baud(APP_SERIAL_IF_BAUDRATE);
     //this->serial_port.set_format(
     //        /* bits */ 8,
@@ -247,10 +206,13 @@ void application::setup()
     //        /* stop bit */ 1
     //);
 
-    this->tacho[0].setup(false);    
-    this->tacho[1].setup(false);
-    this->tacho[2].setup(false);
-    this->tacho[3].setup(false);
+    this->tacho[0].setup();    
+    this->tacho[1].setup();
+    this->tacho[2].setup();
+    this->tacho[3].setup();
+
+    this->imu.setup();
+    //this->gps.setup();
 
     // Registro de tareas periódicas
     this->periodic_task_counter_max = int(CONTROL_CYCLE_FREQ);
@@ -307,7 +269,6 @@ void application::setup()
     };
     this->play_led_sequence(imu_on_led_sequence);
 
-    //this->imu.setup();
     
     // 5. Configurar GPS
     static led_sequence_entry_t gps_on_led_sequence[] = 
@@ -345,9 +306,10 @@ void application::handle_packet(const uint8_t* payload, uint8_t n)
 	}
 	else
 	{
-        // Incrementar contador de paquetes aceptados.
-		this->tmy[TMY_PARAM_ACCEPTED_PACKETS]++;
-
+        // Incrementar contador de paquetes aceptados y cambiar estado de led.
+		this->tmy[TMY_PARAM_ACCEPTED_PACKETS]++;        
+        this->leds[0].write(!this->leds[0].read());
+        
         // Ejecutar comando y actualizar status y código de último comando
 		this->tmy[TMY_PARAM_LAST_ERROR] =
 				(opcode < OPCODE_LAST) ?
@@ -387,10 +349,7 @@ void application::handle_connection_lost()
 
 	//REQUEST_EXTERNAL_RESET
 
-	//apagar motores
-	this->throttles[0] = 0;
-	this->throttles[1] = 0;
-    
+	//apagar motores    
     /*
 	this->motor_ctl.set_motor_throttles(this->throttles, 
     		l298_motor_control::motor_control_flags::motor_a|
@@ -477,23 +436,23 @@ application::error_code application::led_off(const uint8_t* payload, uint8_t n)
 // BEGIN Comandos específicos de la aplicación 
 
 application::error_code application::set_motor_throttles(const uint8_t* payload, uint8_t n)
-{	
-	uint8_t flags = payload[4];
+{	    
+	uint8_t flags = payload[8];
+
+    float new_throttles[2];
+
 
     if ( flags & l298_motor_control::motor_control_flags::motor_a )
     {
-        std::memcpy(&this->throttles[0],&payload[0],2);
+        std::memcpy(&new_throttles[0],&payload[0],4);
     }
 
     if ( flags & l298_motor_control::motor_control_flags::motor_b )
     {
-        std::memcpy(&this->throttles[1],&payload[2],2);
+        std::memcpy(&new_throttles[1],&payload[4],4);
     }
 
-    // Actualizar TMY
-    std::memcpy(&this->tmy[TMY_PARAM_MOTOR_A_THROTTLE_B0],&this->throttles,4);
-
-	this->motor_ctl.set_motor_throttles(this->throttles, flags);
+	this->motor_ctl.set_motor_throttles(new_throttles, flags);    
 	return error_code::success;
 }
 
@@ -512,20 +471,37 @@ application::error_code application::set_motor_speed_setpoints(const uint8_t* pa
     }
 
     // Actualizar TMY
-    std::memcpy(&this->tmy[TMY_PARAM_MOTOR_A_SETPOINT_SPEED_B0],&this->speed_setpoints,8);
+    std::memcpy(&this->tmy[TMY_PARAM_MOTOR_A_SETPOINT_SPEED_B0],this->speed_setpoints,8);
 
-	//this->motor_ctl.set_motor_speeds(this->throttles, flags);
+    this->motor_ctl.set_motor_target_speeds(this->speed_setpoints, flags);
+    this->motor_ctl.set_mode(l298_motor_control::motor_control_mode::pid);
 	return error_code::success;
 }
+
+
+application::error_code application::config_pid_controller(const uint8_t* payload, uint8_t n)
+{
+    float max = 1.0f;
+    float min = -1.0f;
+    float kp, kd, ki;    
+    std::memcpy(&kp,&payload[4],4);
+    std::memcpy(&kd,&payload[8],4);
+    std::memcpy(&ki,&payload[12],4);
+    this->motor_ctl.get_pid_controller(0).reset(max,min,kp,kd,ki);
+    this->motor_ctl.get_pid_controller(1).reset(max,min,kp,kd,ki);
+	return error_code::success;
+}
+
+
 
 /* Tareas periódicas */
 
 void application::read_imu()
 {	
     //printf("%03d update_imu\n\r",this->periodic_task_counter);
-    /*
     
-    COMENTADO HASTA RESOLVER BUG
+    
+    //COMENTADO HASTA RESOLVER BUG
 
     this->imu.process();    
     this->sensor_fusion.update( this->imu.get_eng_values().acc[0],
@@ -538,45 +514,64 @@ void application::read_imu()
                                 this->imu.get_eng_values().mag[1],  
                                 this->imu.get_eng_values().mag[2],
                                 1.0f/READ_IMU_FREQ );
-    */
     // ax,ay,az,gx,gy,gz,mx,my,mz,temp
-    /*
-    std::memcpy(&this->tmy[TMY_PARAM_IMU_RAW_ACCEL_X_B0],
-                &this->imu.get_raw_values(),  sizeof(float)*10);
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_ENG_ACCEL_X_B0],
+                &this->imu.get_eng_values().acc[0],  sizeof(float)*3);
+
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_ENG_GYRO_X_B0],
+                &this->imu.get_eng_values().gyro[0],  sizeof(float)*3);
+
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_ENG_MAG_X_B0],
+                &this->imu.get_eng_values().mag[0],  sizeof(float)*3);
+
+    std::memcpy(&this->tmy[TMY_PARAM_IMU_TEMP_B0],
+                &this->imu.get_eng_values().temp,  sizeof(float));                
     
     // x,y,z, w
     std::memcpy(&this->tmy[TMY_PARAM_IMU_QUAT_X_B0],
                 this->sensor_fusion.get_quaternion(),  sizeof(float)*4);
-    */
 }
 
 void application::read_tachometers()
 {	
-    //this->tacho[0].debug();
+    for(int i=0;i<4;i++)
+    {
+        // Leer valor filtrado con mediana
+        this->tacho_readings[i]= this->tacho_filters[i].process(this->tacho[i].get_rpm());
 
-    // Velocidad medida en tacómetro 1 (RPM)
-    //this->tacho_readings[0]+=0.1f;
-    //this->tacho_readings[1]+=0.2f;
-    //this->tacho_readings[2]+=0.3f;
-    //this->tacho_readings[3]+=0.4f;
+        // Limitar a valores razonables.
+        if(this->tacho_readings[i]<0){
+            this->tacho_readings[i] = 0.0f;
+        }
+        if(this->tacho_readings[i]> MAX_TACHO_VALID_RPM_READING ){
+            this->tacho_readings[i] = 0.0f;
+        }
+        this->tacho_counters[i]=this->tacho[i].get_total_tick_count();        
+    }    
 
-    this->tacho_readings[0]=this->tacho[0].get_rpm();
-    this->tacho_readings[1]=this->tacho[1].get_rpm();
-    this->tacho_readings[2]=this->tacho[2].get_rpm();
-    this->tacho_readings[3]=this->tacho[3].get_rpm();
+    // Establecer las velocidades leídas. 
+    // Notar que no tienen signo, el motor les pondrá el signo.
+    float measured_speeds[2];
 
-    this->tacho_counters[0]=this->tacho[0].get_total_tick_count();
-    this->tacho_counters[1]=this->tacho[1].get_total_tick_count();
-    this->tacho_counters[2]=this->tacho[2].get_total_tick_count();
-    this->tacho_counters[3]=this->tacho[3].get_total_tick_count();
+    // Modo promediado
+    //measured_speeds[0] = (this->tacho_readings[0] + this->tacho_readings[2])/2.0f;
+    //measured_speeds[1] = (this->tacho_readings[1] + this->tacho_readings[3])/2.0f;
 
-    std::memcpy(&this->tmy[TMY_PARAM_TACHO1_SPEED_B0],this->tacho_readings,8*4);
+    // Modo mínimo
+    measured_speeds[0] = std::min(this->tacho_readings[0],this->tacho_readings[2]);
+    measured_speeds[1] = std::min(this->tacho_readings[1],this->tacho_readings[3]);                
+    this->motor_ctl.set_motor_measured_speeds(measured_speeds);
+
+
+    std::memcpy(&this->tmy[TMY_PARAM_TACHO1_SPEED_B0],this->tacho_readings,4*4);
+    std::memcpy(&this->tmy[TMY_PARAM_TACHO1_COUNT_B0],this->tacho_counters,4*4);
 }
 
 void application::read_gps()
 {	    
     //this->gps.process();
 
+    
     /*
     if(this->gps.is_valid())
     {
@@ -586,12 +581,18 @@ void application::read_gps()
         std::memcpy(&this->tmy[TMY_PARAM_GPS_LONG_B0],&this->gps_lon,4);
         std::memcpy(&this->tmy[TMY_PARAM_GPS_LAT_B0],&this->gps_lat,4);
     } 
-    */    
+    */
+    
 }
 
 void application::write_motors()
 {
-    // FIXME
+    this->motor_ctl.update(1.0f/WRITE_MOTORS_FREQ);
+    
+    float tmp = this->motor_ctl.get_motor_throttle(0);    
+    std::memcpy(&this->tmy[TMY_PARAM_MOTOR_A_THROTTLE_B0],&tmp,4);
+    tmp = this->motor_ctl.get_motor_throttle(1);
+    std::memcpy(&this->tmy[TMY_PARAM_MOTOR_B_THROTTLE_B0],&tmp,4);
 }
 
 /* Reportes */
@@ -614,14 +615,14 @@ void application::send_imu_report()
 
 	this->get_payload_buffer()[0] = REPORT_IMU_AHRS_STATE;
     // COMENTADO HASTA RESOLVER BUG DE IMU
-	//this->get_payload_buffer()[1] = (this->imu.is_mag_valid() << 1) |
-    //                                (this->imu.is_mpu_valid() << 0); 
+	this->get_payload_buffer()[1] = (this->imu.is_mag_valid() << 1) |
+                                    (this->imu.is_mpu_valid() << 0); 
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
 
     // ax,ay,az,gx,gy,gz,mx,my,mz,temp,qx,qy,qz,qw
     std::memcpy(&this->get_payload_buffer()[4], 
-                &this->tmy[TMY_PARAM_IMU_RAW_ACCEL_X_B0], 14*4);
+                &this->tmy[TMY_PARAM_IMU_ENG_ACCEL_X_B0], 14*4);
 
 	this->send(4 + (14*4) );
 }
@@ -635,8 +636,8 @@ void application::send_motion_control_report()
 	this->get_payload_buffer()[1] = 0; // estado
 	this->get_payload_buffer()[2] = 0; // spare
 	this->get_payload_buffer()[3] = 0; // spare 
-    std::memcpy(&this->get_payload_buffer()[4], &this->tmy[TMY_PARAM_TACHO1_SPEED_B0], 11*4);
-	this->send(4 + (11*4) );
+    std::memcpy(&this->get_payload_buffer()[4], &this->tmy[TMY_PARAM_TACHO1_SPEED_B0], 12*4);
+	this->send(4 + (12*4) );
 }
 
 void application::send_gps_report()
@@ -654,4 +655,25 @@ void application::send_gps_report()
 }
 
 
+void application::send_pid_report()
+{
+    //printf("%03d send_gps_report\n\r",this->periodic_task_counter);
+	this->get_payload_buffer()[0] = REPORT_PID_STATE;
+    //this->get_payload_buffer()[1] = this->gps.is_valid();
+	this->get_payload_buffer()[2] = 0; // spare
+	this->get_payload_buffer()[3] = 0; // spare 
 
+    float tmp;    
+    tmp = this->motor_ctl.get_pid_controller(0).get_max();
+    std::memcpy(&this->get_payload_buffer()[4], &tmp, 4);
+    tmp = this->motor_ctl.get_pid_controller(0).get_min();
+    std::memcpy(&this->get_payload_buffer()[8], &tmp, 4);
+    tmp = this->motor_ctl.get_pid_controller(0).get_kp();
+    std::memcpy(&this->get_payload_buffer()[12], &tmp, 4);
+    tmp = this->motor_ctl.get_pid_controller(0).get_kd();
+    std::memcpy(&this->get_payload_buffer()[16], &tmp, 4);
+    tmp = this->motor_ctl.get_pid_controller(0).get_ki();
+    std::memcpy(&this->get_payload_buffer()[20], &tmp, 4);
+    
+	this->send(4 + (5*4)  );
+}

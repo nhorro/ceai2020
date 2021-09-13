@@ -31,6 +31,9 @@ enum opcode_index_e {
      */
 	OPCODE_UPDATE_MOTOR_SPEED_SETPOINTS		= 0x04,
 
+    /** Reiniciar controlador PID
+     */
+	OPCODE_RESET_PID_CONTROLLER = 0x05,
 
 	// END Opcodes específicos de la aplicación
 	OPCODE_LAST

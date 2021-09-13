@@ -13,6 +13,17 @@ pid_controller::pid_controller(float max, float min, float kp, float kd, float k
 
 }
 
+void pid_controller::reset(float max, float min, float kp, float kd, float ki )
+{
+    this->max = max;
+    this->min = min;
+    this->kp = kp;
+    this->kd = kd;
+    this->ki = ki;
+    this->prev_error =0;
+    this->integral = 0;
+}
+
 float pid_controller::process( float dt, float setpoint, float pv )
 {
     // 1. Calcular error

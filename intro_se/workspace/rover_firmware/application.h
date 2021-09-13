@@ -12,8 +12,11 @@
 #include "actuators/motor/l298n_motor_control.h"
 #include "sensors/tachometer/lm393_tachometer.h"
 #include "sensors/mpu9250_imu/mpu9250.h"
-#include "estimation/madwick/madwick.h"
 #include "sensors/gps/ublox_neo6m_gps.h"
+
+#include "estimation/madwick/madwick.h"
+
+#include "filters/median/median_filter.h"
 
 #include "config.h"
 
@@ -182,6 +185,9 @@ private:
     /* Velocidad de motores */
     application::error_code set_motor_speed_setpoints(const uint8_t* payload, uint8_t n);
 
+    /* Tuning de PID. */
+    application::error_code config_pid_controller(const uint8_t* payload, uint8_t n);
+
     /* Definición de reportes */
 
     /* Reportes :: Reportes de sistema */
@@ -228,8 +234,7 @@ private:
     /* IMU */
 
     /* Motor con L298 */
-	l298_motor_control motor_ctl;
-	int16_t throttles[2];
+	l298_motor_control motor_ctl;	
     float speed_setpoints[2];
 
     /* Escribir motores */    
@@ -237,6 +242,8 @@ private:
 
     /* Tacómetros */
     lm393_tachometer tacho[4];
+    median_filter tacho_filters[4];
+
     float tacho_readings[4]; 
     uint32_t tacho_counters[4]; 
 
@@ -244,9 +251,8 @@ private:
     void read_tachometers();
 
     /* IMU MPU9250 */
-    //float imu_state[10];
-	
-    //mpu9250 imu;
+    	
+    mpu9250 imu;
     madwick_sensor_fusion sensor_fusion;
     
     /** Actualizar lecturas de IMU. */
@@ -260,6 +266,10 @@ private:
 
     float gps_lon;
     float gps_lat;
+
+
+    // Reporte de PID (ingeniería)
+    void send_pid_report();
 };
 
 #endif // ROVER_APPLICATION_H

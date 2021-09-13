@@ -27,6 +27,9 @@ enum report_index_e {
     /** Reporte de posición (GPS). */
 	REPORT_GPS_STATE		        				=	0x84,
 
+    /** Reporte de PID. */
+	REPORT_PID_STATE		        				=	0x85,
+
 	// END Reportes específicos de la aplicación
     
 	REPORT__LAST

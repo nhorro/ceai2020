@@ -16,6 +16,7 @@ class RoverClient(Connection):
     CMD_LED_OFF = 2    
     CMD_UPDATE_MOTOR_THROTTLES = 3
     CMD_UPDATE_MOTOR_SPEED_SETPOINTS = 4
+    CMD_CONFIGURE_PID = 5
 
     # Reportes
 
@@ -33,6 +34,9 @@ class RoverClient(Connection):
 
     # Reporte de posición (GPS). 
     REPORT_GPS_STATE = 0x84
+
+    # Reporte con parámetros de PID
+    REPORT_PID_PARAMS = 0x85
 
     # Enums
     MOTOR_A = 0x01
@@ -56,32 +60,32 @@ class RoverClient(Connection):
 
     # Telemetría de IMU
     
-    # Eje X de Acelerómetro (crudo)
-    TMY_PARAM_IMU_RAW_ACCEL_X = 0
+    # Eje X de Acelerómetro (ingeniería)
+    TMY_PARAM_IMU_ENG_ACCEL_X = 0
 
-    # Eje Y de Acelerómetro (crudo) */
-    TMY_PARAM_IMU_RAW_ACCEL_Y = 0
+    # Eje Y de Acelerómetro (ingeniería) */
+    TMY_PARAM_IMU_ENG_ACCEL_Y = 0
 
-    # Eje Z de Acelerómetro (crudo) */
-    TMY_PARAM_IMU_RAW_ACCEL_Z = 0
+    # Eje Z de Acelerómetro (ingeniería) */
+    TMY_PARAM_IMU_ENG_ACCEL_Z = 0
 
-    # Eje X de Giróscopo (crudo) */
-    TMY_PARAM_IMU_RAW_GYRO_X = 0
+    # Eje X de Giróscopo (ingeniería) */
+    TMY_PARAM_IMU_ENG_GYRO_X = 0
 
-    # Eje Y de Giróscopo (crudo) */
-    TMY_PARAM_IMU_RAW_GYRO_Y = 0
+    # Eje Y de Giróscopo (ingeniería) */
+    TMY_PARAM_IMU_ENG_GYRO_Y = 0
 
-    # Eje Z de Giróscopo (crudo) */
-    TMY_PARAM_IMU_RAW_GYRO_Z = 0
+    # Eje Z de Giróscopo (ingeniería) */
+    TMY_PARAM_IMU_ENG_GYRO_Z = 0
 
-    # Eje X de Magnetómetro (crudo) */
-    TMY_PARAM_IMU_RAW_MAG_X = 0
+    # Eje X de Magnetómetro (ingeniería) */
+    TMY_PARAM_IMU_ENG_MAG_X = 0
 
-    # Eje Y de Magnetómetro (crudo) */
-    TMY_PARAM_IMU_RAW_MAG_Y = 0
+    # Eje Y de Magnetómetro (ingeniería) */
+    TMY_PARAM_IMU_ENG_MAG_Y = 0
 
-    # Eje Z de Magnetómetro (crudo) */
-    TMY_PARAM_IMU_RAW_MAG_Z = 0
+    # Eje Z de Magnetómetro (ingeniería) */
+    TMY_PARAM_IMU_ENG_MAG_Z = 0
 
     # Temperatura */
     TMY_PARAM_IMU_TEMP = 0
@@ -180,13 +184,14 @@ class RoverClient(Connection):
             
         Args
         ----
-            speeds(list): velocidad de cada par entre (-255,255)
+            speeds(list): velocidad de cada par entre (-1f,1f)
         """
-        packed = struct.pack('<2h',throttles[0],throttles[1])
+        packed = struct.pack('<2f',throttles[0],throttles[1])
         pkt = build_packet(
             [
                 RoverClient.CMD_UPDATE_MOTOR_THROTTLES,
                 packed[0],packed[1],packed[2],packed[3],
+                packed[4],packed[5],packed[6],packed[7],
                 flags
             ] )
         """
@@ -198,7 +203,7 @@ class RoverClient(Connection):
         self.send_packet(pkt)
 
 
-    def set_motor_setpoint_speeds(self, setpoint_speeds, flags ):        
+    def set_motor_speed_setpoint(self, setpoint_speeds, flags ):        
         """ Establecer setpoint de velocidad de motores
             
         Args
@@ -219,22 +224,49 @@ class RoverClient(Connection):
             tmp_str += "%02X " % x
         print(tmp_str)
         """
-        self.send_packet(pkt)        
+        self.send_packet(pkt)      
+
+    def configure_motor_pid(self, kp,kd,ki ):        
+        """ Establecer parámetros de PID (se usan para los dos motores)
+            
+        Args
+        ----
+            kp(float): Proporcional.
+            kd(float): Derivativo.
+            ki(float): Integral.
+        """
+        packed = struct.pack('<3f',kp,kd,ki)
+        pkt = build_packet(
+            [
+                RoverClient.CMD_CONFIGURE_PID,
+                packed[0],packed[1],packed[2],packed[3],
+                packed[4],packed[5],packed[6],packed[7],
+                packed[8],packed[9],packed[10],packed[11]
+            ] )
+        """
+        tmp_str = ""
+        for x in pkt:
+            tmp_str += "%02X " % x
+        print(tmp_str)
+        """
+        self.send_packet(pkt)                  
 
 
 
     def __on_data_received(self, payload):
         """ Manejar las respuestas del Rover
-
-        
         """
         report_code = payload[0]
 
         if report_code in self.__report_handlers:
-            self.__report_handlers[report_code](payload[1:])
+            try:
+                self.__report_handlers[report_code](payload[1:])
+            except IndexError as ex:
+                print("Error processing report type {}".format(report_code))
+                raise(ex)
         else:
             self.__report_counters["INVALID"]+=1   
-            #print("Reporte desconocido:", payload)
+            print("Reporte desconocido:", payload)
             #tmp = ""
             #for x in payload:
             #    tmp+="%02X " % x
@@ -262,7 +294,7 @@ class RoverClient(Connection):
         """
         self.__report_counters["MOTION_CONTROL_STATE"]+=1
 
-        parsed = struct.unpack('<ccc4f4I2h2f', bytearray(payload))
+        parsed = struct.unpack('<ccc4f4I2f2f', bytearray(payload))
         self.TMY_PARAM_TACHO1_SPEED = parsed[3]
         self.TMY_PARAM_TACHO2_SPEED = parsed[4]
         self.TMY_PARAM_TACHO3_SPEED = parsed[5]
@@ -277,7 +309,7 @@ class RoverClient(Connection):
         self.TMY_PARAM_MOTOR_B_THROTTLE = parsed[12]
 
         self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[13]
-        self.TMY_PARAM_MOTOR_A_SETPOINT_SPEED = parsed[14]
+        self.TMY_PARAM_MOTOR_B_SETPOINT_SPEED = parsed[14]
 
     def __on_gps_report(self,payload):
         """ Procesar un reporte de GPS.
@@ -290,24 +322,23 @@ class RoverClient(Connection):
         self.__report_counters["IMU_AHRS_STATE"]+=1
 
         parsed = struct.unpack('<ccc14f', bytearray(payload))
-
-        self.TMY_PARAM_IMU_RAW_ACCEL_X = parsed[3]
-        self.TMY_PARAM_IMU_RAW_ACCEL_Y = parsed[4] 
-        self.TMY_PARAM_IMU_RAW_ACCEL_Z = parsed[5]
-        self.TMY_PARAM_IMU_RAW_GYRO_X = parsed[6]
-        self.TMY_PARAM_IMU_RAW_GYRO_Y = parsed[7]
-        self.TMY_PARAM_IMU_RAW_GYRO_Z = parsed[8]
-        self.TMY_PARAM_IMU_RAW_GYRO_Z = parsed[9]    
-        self.TMY_PARAM_IMU_RAW_MAG_X = parsed[10]
-        self.TMY_PARAM_IMU_RAW_MAG_Y = parsed[11]
-        self.TMY_PARAM_IMU_RAW_MAG_Z = parsed[12] 
-        self.TMY_PARAM_IMU_TEMP = parsed[13] 
+        
+        self.TMY_PARAM_IMU_ENG_ACCEL_X = parsed[3]
+        self.TMY_PARAM_IMU_ENG_ACCEL_Y = parsed[4] 
+        self.TMY_PARAM_IMU_ENG_ACCEL_Z = parsed[5]
+        self.TMY_PARAM_IMU_ENG_GYRO_X = parsed[6]
+        self.TMY_PARAM_IMU_ENG_GYRO_Y = parsed[7]
+        self.TMY_PARAM_IMU_ENG_GYRO_Z = parsed[8]
+        self.TMY_PARAM_IMU_ENG_MAG_X = parsed[9]
+        self.TMY_PARAM_IMU_ENG_MAG_Y = parsed[10]
+        self.TMY_PARAM_IMU_ENG_MAG_Z = parsed[11] 
+        self.TMY_PARAM_IMU_TEMP = parsed[12] 
 
         # IMU (Estimaciones)
-        self.TMY_PARAM_IMU_QUAT_X = parsed[14]
-        self.TMY_PARAM_IMU_QUAT_Y = parsed[15]
-        self.TMY_PARAM_IMU_QUAT_Z = parsed[16]
-        self.TMY_PARAM_IMU_QUAT_W = parsed[17]
+        self.TMY_PARAM_IMU_QUAT_X = parsed[13]
+        self.TMY_PARAM_IMU_QUAT_Y = parsed[14]
+        self.TMY_PARAM_IMU_QUAT_Z = parsed[15]
+        self.TMY_PARAM_IMU_QUAT_W = parsed[16]
 
     def print_general_tmy(self):
         print("ACCEPTED_PACKETS: {}".format(self.TMY_PARAM_ACCEPTED_PACKETS))
@@ -335,17 +366,19 @@ class RoverClient(Connection):
 
 
     def print_imu_state(self):
-        print("IMU_RAW_ACCEL_X: {:.3f}".format(self.TMY_PARAM_IMU_RAW_ACCEL_X))
-        print("IMU_RAW_ACCEL_Y: {:.3f}".format(self.TMY_PARAM_IMU_RAW_ACCEL_Y))
-        print("IMU_RAW_ACCEL_Z: {:.3f}".format(self.TMY_PARAM_IMU_RAW_ACCEL_Z))
+        print("IMU_ENG_ACCEL_X: {:.3f}".format(self.TMY_PARAM_IMU_ENG_ACCEL_X))
+        print("IMU_ENG_ACCEL_Y: {:.3f}".format(self.TMY_PARAM_IMU_ENG_ACCEL_Y))
+        print("IMU_ENG_ACCEL_Z: {:.3f}".format(self.TMY_PARAM_IMU_ENG_ACCEL_Z))
 
-        print("IMU_RAW_GYRO_X: {:.3f}".format(self.TMY_PARAM_IMU_RAW_GYRO_X))
-        print("IMU_RAW_GYRO_Y: {:.3f}".format(self.TMY_PARAM_IMU_RAW_GYRO_Y))
-        print("IMU_RAW_GYRO_Z: {:.3f}".format(self.TMY_PARAM_IMU_RAW_GYRO_Z))
+        print("IMU_ENG_GYRO_X: {:.3f}".format(self.TMY_PARAM_IMU_ENG_GYRO_X))
+        print("IMU_ENG_GYRO_Y: {:.3f}".format(self.TMY_PARAM_IMU_ENG_GYRO_Y))
+        print("IMU_ENG_GYRO_Z: {:.3f}".format(self.TMY_PARAM_IMU_ENG_GYRO_Z))
 
-        print("IMU_RAW_MAG_X: {:.3f}".format(self.TMY_PARAM_IMU_RAW_MAG_X))
-        print("IMU_RAW_MAG_Y: {:.3f}".format(self.TMY_PARAM_IMU_RAW_MAG_Y))
-        print("IMU_RAW_MAG_Z: {:.3f}".format(self.TMY_PARAM_IMU_RAW_MAG_Z))
+        print("IMU_ENG_MAG_X: {:.3f}".format(self.TMY_PARAM_IMU_ENG_MAG_X))
+        print("IMU_ENG_MAG_Y: {:.3f}".format(self.TMY_PARAM_IMU_ENG_MAG_Y))
+        print("IMU_ENG_MAG_Z: {:.3f}".format(self.TMY_PARAM_IMU_ENG_MAG_Z))
+
+        print("IMU_TEMP: {:.3f}".format(self.TMY_PARAM_IMU_TEMP))
         
         print("IMU_QUAT_X: {:.3f}".format(self.TMY_PARAM_IMU_QUAT_X))
         print("IMU_QUAT_Y: {:.3f}".format(self.TMY_PARAM_IMU_QUAT_Y))
